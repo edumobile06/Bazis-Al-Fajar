@@ -245,7 +245,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
 <section class="tab" id="t-set">
   <div class="card">
     <h2>☁️ Status Sinkronisasi Cloud</h2>
-    <button class="btn w" onclick="syncToCloud()">💾 Simpan Manual ke Cloud</button>
+    <button class="btn w" onclick="syncToCloud()">💾 Simpan Ke Cloud Sekarang</button>
     <div id="cloudStatus" style="font-size:12px;color:var(--mt);margin-top:8px;text-align:center;font-weight:700">Status: Menghubungkan ke Cloud...</div>
   </div>
 
@@ -351,25 +351,9 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
 <div class="toast" id="toast"></div>
 
 <script>
-// Initial Firebase Public Storage
-const firebaseConfig = {
-  apiKey: "AIzaSyD-PlaceholderKeyForPublicBaza",
-  authDomain: "bazis-alfajar.firebaseapp.com",
-  projectId: "bazis-alfajar",
-  storageBucket: "bazis-alfajar.appspot.com",
-  messagingSenderId: "102938475612",
-  appId: "1:102938475612:web:abcdef123456"
-};
-
-var db = null;
-try {
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  db = firebase.firestore();
-} catch(e) {
-  console.log("Cloud Database init offline mode");
-}
+// JSONBin Storage Endpoint Direct Sync
+var CLOUD_BIN_URL = "https://api.jsonbin.io/v3/b/6644f51beacd3cb47fe142ff";
+var CLOUD_KEY = "$2a$10$7XbN12Z5Q3Kz5K4xYv7zZ.b5g5H3f8G8y2N1J5L9K0xX6v7u8v9W6";
 
 var K={tx:'giss_transactions',bg:'giss_budgets',cat:'giss_categories',th:'giss_theme',init:'giss_init',auth:'giss_is_admin',l1:'giss_logo1',l2:'giss_logo2'};
 var MON=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -414,10 +398,9 @@ function save(){
   localStorage.setItem(K.cat,JSON.stringify(cats));
   localStorage.setItem(K.auth,JSON.stringify(isAdmin));
   
-  // Auto Save ke Cloud dalam 5 Detik secara otomatis
   clearTimeout(cloudTimer);
   var st = document.getElementById('cloudStatus');
-  if(st) st.textContent = 'Status: Perubahan tersimpan lokal, mengirim ke Cloud dlm 5d...';
+  if(st) st.textContent = 'Status: Perubahan tersimpan lokal, auto-save ke Cloud 5d...';
   cloudTimer = setTimeout(function(){
     syncToCloud();
   }, 5000);
@@ -425,46 +408,55 @@ function save(){
 
 function syncToCloud(){
   var st = document.getElementById('cloudStatus');
-  if(st) st.textContent = 'Status: Sedang menyimpan ke Cloud... ⏳';
-  
-  if(!db){
-    if(st) st.textContent = 'Status: Terhubung Lokal (Offline Mode)';
-    return;
-  }
+  if(st) st.textContent = 'Status: Mengunggah ke Cloud... ⏳';
 
-  db.collection('app_data').doc('bazis_main').set({
-    transactions: tx,
-    budgets: bg,
-    categories: cats,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(function(){
+  fetch(CLOUD_BIN_URL, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': CLOUD_KEY
+    },
+    body: JSON.stringify({
+      transactions: tx,
+      budgets: bg,
+      categories: cats,
+      updatedAt: new Date().toISOString()
+    })
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(data){
     if(st) st.textContent = 'Status: Terkoneksi & Tersimpan di Cloud! ✅ (' + new Date().toLocaleTimeString('id-ID') + ')';
     toast('Data tersimpan secara otomatis di Cloud!');
-  }).catch(function(err){
+  })
+  .catch(function(err){
     if(st) st.textContent = 'Status: Tersimpan Lokal (Offline Mode)';
   });
 }
 
-function listenCloudRealtime(){
-  if(!db) return;
-  db.collection('app_data').doc('bazis_main').onSnapshot(function(doc){
-    if(doc.exists){
-      var data = doc.data();
-      if(data.transactions) tx = data.transactions;
-      if(data.budgets) bg = data.budgets;
-      if(data.categories) cats = data.categories;
+function fetchCloudData(){
+  var st = document.getElementById('cloudStatus');
+  if(st) st.textContent = 'Status: Mengunduh data dari Cloud... ⏳';
+
+  fetch(CLOUD_BIN_URL + '/latest', {
+    headers: { 'X-Master-Key': CLOUD_KEY }
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(data){
+    if(data && data.record){
+      if(data.record.transactions) tx = data.record.transactions;
+      if(data.record.budgets) bg = data.record.budgets;
+      if(data.record.categories) cats = data.record.categories;
       
       localStorage.setItem(K.tx,JSON.stringify(tx));
       localStorage.setItem(K.bg,JSON.stringify(bg));
       localStorage.setItem(K.cat,JSON.stringify(cats));
       
       renderAll();
-      var st = document.getElementById('cloudStatus');
-      if(st) st.textContent = 'Status: Realtime Sync Cloud Aktif ✅';
+      if(st) st.textContent = 'Status: Sinkron dengan Cloud ✅ (' + new Date().toLocaleTimeString('id-ID') + ')';
     }
-  }, function(err){
-    var st = document.getElementById('cloudStatus');
-    if(st) st.textContent = 'Status: Mode Lokal Perangkat Aktif';
+  })
+  .catch(function(err){
+    if(st) st.textContent = 'Status: Menggunakan data lokal';
   });
 }
 
@@ -1073,7 +1065,7 @@ function renderAll(){
 }
 
 window.addEventListener('DOMContentLoaded', function(){
-  listenCloudRealtime();
+  fetchCloudData(); // Selalu tarik data cloud saat halaman pertama kali dimuat
 
   var inDateEl = document.getElementById('inDate');
   if(inDateEl) inDateEl.value=ymd(new Date());
