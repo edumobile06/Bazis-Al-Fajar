@@ -1,1591 +1,1516 @@
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BAZIS MASJID AL-FAJAR - Laporan Pengelolaan Dana</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            emerald: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-              900: '#064e3b',
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAZIS MASJID AL-FAJAR - Laporan Pengelolaan Dana</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Font: Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- jsPDF & autoTable -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-  </style>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK (Compat Version for simple global integration) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.7);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen pb-24 transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
 
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-30 bg-emerald-800 dark:bg-gray-800 text-white shadow-md transition-colors">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-      <!-- Logos & Title -->
-      <div class="flex items-center space-x-3">
-        <div id="logoContainer" class="flex items-center space-x-2">
-          <img id="logoMasjid" src="https://placehold.co/80x80/047857/ffffff?text=MASJID" alt="Logo Masjid" class="w-10 h-10 rounded-full bg-white p-0.5 object-cover border border-emerald-400">
-          <img id="logoBazis" src="https://placehold.co/80x80/065f46/ffffff?text=BAZIS" alt="Logo BAZIS" class="w-10 h-10 rounded-full bg-white p-0.5 object-cover border border-emerald-400">
-        </div>
-        <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight">MASJID AL-FAJAR</h1>
-          <p class="text-xs text-emerald-200 dark:text-emerald-400 font-medium">Laporan BAZIS & Kas</p>
-        </div>
-      </div>
-
-      <!-- Controls Right (Theme & Admin Badge/Login) -->
-      <div class="flex items-center space-x-2">
-        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-full bg-emerald-700 dark:bg-gray-700 hover:bg-emerald-600 dark:hover:bg-gray-600 text-amber-300 transition">
-          <i id="themeIcon" class="fas me-0 fa-moon"></i>
-        </button>
-
-        <button id="authBtn" onclick="handleAuthAction()" class="flex items-center space-x-1 text-xs px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 dark:bg-gray-700 dark:hover:bg-gray-600 border border-emerald-500/30 transition">
-          <i id="authIcon" class="fas fa-lock text-xs"></i>
-          <span id="authText">Admin Login</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-4xl mx-auto px-4 pt-4 space-y-4">
-
-    <!-- HERO BALANCES CARD -->
-    <div class="bg-gradient-to-br from-emerald-700 to-emerald-900 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
-      <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl">
-        <i class="fas fa-mosque"></i>
-      </div>
-
-      <div class="relative z-10 space-y-4">
-        <!-- Main Balance -->
-        <div class="flex justify-between items-start border-b border-emerald-600/50 pb-3">
-          <div>
-            <span class="text-xs font-medium text-emerald-200 uppercase tracking-wider">Total Saldo Kas BAZIS</span>
-            <div id="totalBalanceText" class="text-2xl sm:text-3xl font-extrabold mt-0.5">Rp 0</div>
-          </div>
-          <span id="statusBadge" class="text-[10px] bg-emerald-600/80 border border-emerald-400/40 text-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Synchronized
-          </span>
-        </div>
-
-        <!-- Income & Expense Summary -->
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-600/30">
-            <div class="text-xs text-emerald-200 flex items-center gap-1">
-              <i class="fas font-black fa-arrow-down text-emerald-300"></i> Total Pemasukan
+    <!-- HEADER / NAVIGATION TOP -->
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xl shadow-md" id="logoContainer">
+                    <i class="fa-solid font-bold fa-mosque"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold leading-tight text-emerald-800 dark:text-emerald-400">BAZIS MASJID AL-FAJAR</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 tracking-wider font-semibold">LAPORAN PENGELOLAAN DANA</p>
+                </div>
             </div>
-            <div id="totalIncomeText" class="text-sm sm:text-base font-bold text-emerald-100 mt-0.5">Rp 0</div>
-          </div>
-          <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-600/30">
-            <div class="text-xs text-emerald-200 flex items-center gap-1">
-              <i class="fas font-black fa-arrow-up text-rose-300"></i> Total Pengeluaran
+
+            <div class="flex items-center gap-2">
+                <!-- Sync Status Badge -->
+                <div id="syncBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                    <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                    <span id="syncStatusText">Menghubungkan...</span>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Ganti Tema">
+                    <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-lg hidden dark:block"></i>
+                </button>
+
+                <!-- Admin Login/Logout Button -->
+                <button id="authBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
+                    <i class="fa-solid fa-lock"></i>
+                    <span id="authBtnText">Login Admin</span>
+                </button>
             </div>
-            <div id="totalExpenseText" class="text-sm sm:text-base font-bold text-rose-100 mt-0.5">Rp 0</div>
-          </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 pb-24">
+
+        <!-- STATUS BAR MOBILE ONLY -->
+        <div class="sm:hidden mb-4">
+            <div id="syncBadgeMobile" class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                <span class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                    <span id="syncStatusTextMobile">Menghubungkan ke Cloud...</span>
+                </span>
+                <span id="adminBadgeMobile" class="hidden font-bold text-xs bg-emerald-700 text-white px-2 py-0.5 rounded">ADMIN</span>
+            </div>
         </div>
 
-        <!-- Account Info & Contact Info -->
-        <div class="pt-2 text-xs text-emerald-100 space-y-1 bg-emerald-950/30 p-3 rounded-xl border border-emerald-600/20">
-          <div class="flex items-center justify-between">
-            <span><i class="fas fa-university mr-1.5 text-emerald-300"></i><strong>BSI:</strong> 7306872456</span>
-            <span class="text-[11px] opacity-90">a.n. Bazis Masjid Al-Fajar</span>
-          </div>
-          <div class="pt-1 border-t border-emerald-800/50">
-            <div><i class="fas fa-user-shield mr-1.5 text-emerald-300"></i><strong>Kontak Pengurus:</strong></div>
-            <div class="pl-5 text-emerald-200 font-mono">0821-7715-6145 - Eko Mardianto</div>
-          </div>
+        <!-- HERO BALANCE CARD -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-emerald-800 via-emerald-700 to-emerald-900 rounded-2xl p-5 sm:p-6 text-white shadow-xl mb-6">
+            <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl pointer-events-none">
+                <i class="fa-solid fa-mosque"></i>
+            </div>
+
+            <div class="relative z-10">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs sm:text-sm font-medium text-emerald-100 bg-emerald-900/50 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                        Total Saldo Kas BAZIS
+                    </span>
+                    <span id="lastUpdatedText" class="text-xs text-emerald-200 opacity-80">Update: -</span>
+                </div>
+
+                <div class="text-3xl sm:text-4xl font-extrabold tracking-tight my-2" id="heroTotalBalance">
+                    Rp 0
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 my-4 pt-3 border-t border-emerald-600/50">
+                    <div class="bg-emerald-900/40 p-2.5 rounded-xl border border-emerald-500/20">
+                        <p class="text-xs text-emerald-200 mb-0.5 flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-down-left text-emerald-400"></i> Total Pemasukan
+                        </p>
+                        <p class="text-sm sm:text-base font-bold text-emerald-300" id="heroTotalIncome">Rp 0</p>
+                    </div>
+                    <div class="bg-emerald-900/40 p-2.5 rounded-xl border border-emerald-500/20">
+                        <p class="text-xs text-emerald-200 mb-0.5 flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-up-right text-rose-400"></i> Total Pengeluaran
+                        </p>
+                        <p class="text-sm sm:text-base font-bold text-rose-300" id="heroTotalExpense">Rp 0</p>
+                    </div>
+                </div>
+
+                <!-- INFO REKENING & KONTAK -->
+                <div class="mt-4 pt-3 border-t border-emerald-600/40 text-xs sm:text-sm text-emerald-100 space-y-1">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-credit-card mt-0.5 text-emerald-300"></i>
+                        <div>
+                            <span class="font-semibold">Rekening Donasi:</span> BSI 7306872456 (a.n. Bazis Masjid Al-Fajar)
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-phone mt-0.5 text-emerald-300"></i>
+                        <div>
+                            <div>Layanan Informasi & Konfirmasi Transfer:</div>
+                            <div class="font-bold text-white text-sm">0821-7715-6145 (Eko Mardianto)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <!-- MONTH NAVIGATOR CARD -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
-      <button onclick="changeMonth(-1)" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-      <div class="text-center">
-        <h2 id="currentMonthDisplay" class="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-100">Oktober 2026</h2>
-        <p id="monthlySummarySub" class="text-xs text-gray-500 dark:text-gray-400">Masuk: Rp 0 | Keluar: Rp 0</p>
-      </div>
-      <button onclick="changeMonth(1)" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition">
-        <i class="fas fa-chevron-right"></i>
-      </button>
-    </div>
-
-    <!-- TAB CONTENTS -->
-
-    <!-- 1. INPUT TAB (ADMIN ONLY) -->
-    <section id="tab-input" class="tab-content hidden space-y-4">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
-        <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
-          <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
-            <i class="fas fa-pen-to-square"></i> Input Transaksi Baru
-          </h3>
-          <span class="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">Mode Admin</span>
-        </div>
-
-        <!-- Smart Chat Parser -->
-        <div class="space-y-1">
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">
-            Teks Cepat / Auto Parser <span class="text-gray-400">(Format: Nama [Spasi] Jumlah)</span>
-          </label>
-          <div class="flex gap-2">
-            <input type="text" id="smartInput" placeholder="Contoh: infaq jumat 1250000 atau beli air galon 25000" class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-            <button onclick="parseSmartText()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl text-sm transition">
-              Parse
+        <!-- NAVIGATION TABS -->
+        <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto scrollbar-none">
+            <button onclick="switchTab('history')" id="tabBtn-history" class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-list-check"></i> Riwayat Transaksi
             </button>
-          </div>
-        </div>
-
-        <form id="transactionForm" onsubmit="saveTransaction(event)" class="space-y-3 pt-2">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <!-- Jenis Transaksi -->
-            <div>
-              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Jenis</label>
-              <select id="txType" onchange="updateCategoryDropdown()" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-                <option value="in">Pemasukan (Masuk)</option>
-                <option value="out">Pengeluaran (Keluar)</option>
-              </select>
-            </div>
-
-            <!-- Tanggal -->
-            <div>
-              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal</label>
-              <input type="date" id="txDate" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <!-- Deskripsi -->
-            <div>
-              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Judul / Deskripsi</label>
-              <input type="text" id="txTitle" placeholder="Contoh: Infaq Harian" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-            </div>
-
-            <!-- Jumlah -->
-            <div>
-              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Jumlah (Rp)</label>
-              <input type="number" id="txAmount" min="0" placeholder="0" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-            </div>
-          </div>
-
-          <!-- Kategori -->
-          <div>
-            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
-            <select id="txCategory" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-              <!-- Dynamically Populated -->
-            </select>
-          </div>
-
-          <!-- Extra Note / Keterangan -->
-          <div>
-            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Catatan Tambahan / Keterangan (Opsional)</label>
-            <textarea id="txNote" rows="2" placeholder="Catatan opsional..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white"></textarea>
-          </div>
-
-          <div class="pt-2">
-            <button type="submit" id="btnSaveTx" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
-              <i class="fas fa-save"></i> Simpan Transaksi
+            <button onclick="switchTab('allocation')" id="tabBtn-allocation" class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-pie-chart"></i> Pos Alokasi Dana
             </button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- 2. HISTORY TAB -->
-    <section id="tab-riwayat" class="tab-content space-y-3">
-      <!-- Search & Filters -->
-      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
-        <div class="relative">
-          <i class="fas fa-search absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-          <input type="text" id="searchHistory" oninput="renderHistory()" placeholder="Cari transaksi..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-        </div>
-
-        <div class="grid grid-cols-3 gap-2">
-          <select id="filterType" onchange="renderHistory()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 dark:text-white">
-            <option value="all">Semua Jenis</option>
-            <option value="in">Pemasukan</option>
-            <option value="out">Pengeluaran</option>
-          </select>
-
-          <select id="filterCategory" onchange="renderHistory()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 dark:text-white">
-            <option value="all">Semua Kategori</option>
-          </select>
-
-          <select id="filterScope" onchange="renderHistory()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 dark:text-white">
-            <option value="month">Bulan Ini</option>
-            <option value="all">Semua Waktu</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- History List -->
-      <div id="historyListContainer" class="space-y-3">
-        <!-- Dynamically filled -->
-      </div>
-    </section>
-
-    <!-- 3. ALLOCATION TAB (ALOKASI DANA) -->
-    <section id="tab-alokasi" class="tab-content hidden space-y-4">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
-        <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
-          <div>
-            <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
-              <i class="fas fa-vault"></i> Pos Alokasi Dana Pos & Program
-            </h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Cadangan dan pembagian alokasi saldo BAZIS</p>
-          </div>
-          <button id="btnAddAllocation" onclick="openAllocationModal()" class="admin-only hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
-            <i class="fas fa-plus"></i> Pos Baru
-          </button>
-        </div>
-
-        <!-- Total Allocation Summary Card -->
-        <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 p-3.5 rounded-xl flex items-center justify-between">
-          <span class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">Total Alokasi Terencana:</span>
-          <span id="totalAllocationSum" class="text-base font-bold text-emerald-700 dark:text-emerald-400">Rp 0</span>
-        </div>
-
-        <div id="allocationCardsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <!-- Dynamically filled -->
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. MANAGEMENT TAB (PENGURUS) -->
-    <section id="tab-pengurus" class="tab-content hidden space-y-4">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
-        <div class="text-center border-b dark:border-gray-700 pb-3">
-          <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400">SUSUNAN PENGURUS BAZIS MASJID AL-FAJAR</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Masa Bakti Periode 2023 - 2027</p>
-        </div>
-
-        <!-- Structure Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <!-- Ketua -->
-          <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 rounded-xl p-4 text-center">
-            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-2 text-lg font-bold">
-              <i class="fas fa-user-tie"></i>
-            </div>
-            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Ketua</span>
-            <h4 class="font-bold text-gray-800 dark:text-gray-100 mt-0.5">Eko Mardianto</h4>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono">0821-7715-6145</p>
-          </div>
-
-          <!-- Sekretaris -->
-          <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 rounded-xl p-4 text-center">
-            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-2 text-lg font-bold">
-              <i class="fas fa-file-signature"></i>
-            </div>
-            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Sekretaris</span>
-            <h4 class="font-bold text-gray-800 dark:text-gray-100 mt-0.5">Maulana RH</h4>
-          </div>
-
-          <!-- Bendahara -->
-          <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 rounded-xl p-4 text-center">
-            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-2 text-lg font-bold">
-              <i class="fas fa-wallet"></i>
-            </div>
-            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Bendahara</span>
-            <h4 class="font-bold text-gray-800 dark:text-gray-100 mt-0.5">M. Fathur Rohman</h4>
-          </div>
-        </div>
-
-        <!-- Anggota List -->
-        <div class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-          <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <i class="fas fa-users text-emerald-600"></i> Anggota Tim Pengurus
-          </h4>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">1</span>
-              Nur Cholis
-            </div>
-            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">2</span>
-              Muhalif
-            </div>
-            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">3</span>
-              Supriyadi
-            </div>
-            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">4</span>
-              Ari Nastoro
-            </div>
-            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">5</span>
-              Muhawan
-            </div>
-            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">6</span>
-              Sarto Ardi
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. SETTINGS TAB (ADMIN ONLY) -->
-    <section id="tab-pengaturan" class="tab-content hidden space-y-4">
-      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-5">
-        <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
-          <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
-            <i class="fas fa-gear"></i> Pengaturan Aplikasi
-          </h3>
-          <span class="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">Khusus Admin</span>
-        </div>
-
-        <!-- Logo Upload Section -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Kustomisasi Logo Header</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Upload Logo Masjid</label>
-              <input type="file" id="fileMasjidLogo" accept="image/*" onchange="uploadLogo('masjid')" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-gray-700 dark:file:text-emerald-300">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Upload Logo BAZIS</label>
-              <input type="file" id="fileBazisLogo" accept="image/*" onchange="uploadLogo('bazis')" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-gray-700 dark:file:text-emerald-300">
-            </div>
-          </div>
-        </div>
-
-        <!-- Reset & Seed Data Controls -->
-        <div class="pt-3 border-t dark:border-gray-700 space-y-3">
-          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Manajemen Data Kas</h4>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="seedSampleData()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold transition">
-              <i class="fas fa-database mr-1"></i> Muat Data Contoh
+            <button onclick="switchTab('committee')" id="tabBtn-committee" class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-users"></i> Pengurus
             </button>
-            <button onclick="confirmResetData()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition">
-              <i class="fas fa-trash mr-1"></i> Reset / Hapus Semua Data
+            <button onclick="switchTab('reports')" id="tabBtn-reports" class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-chart-column"></i> Grafik & Laporan
             </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. CHARTS & REPORTS TAB -->
-    <section id="tab-grafik" class="tab-content hidden space-y-4">
-      <!-- Admin Export Bar -->
-      <div id="exportAdminBar" class="admin-only hidden bg-emerald-900 text-white p-3 rounded-2xl shadow-sm flex items-center justify-between">
-        <span class="text-xs font-medium flex items-center gap-1.5">
-          <i class="fas fa-file-export text-emerald-300"></i> Opsi Ekspor Laporan Admin
-        </span>
-        <div class="flex gap-2">
-          <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
-            <i class="fas fa-file-csv"></i> CSV
-          </button>
-          <button onclick="exportPDF()" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
-            <i class="fas fa-file-pdf"></i> PDF
-          </button>
-        </div>
-      </div>
-
-      <!-- Charts Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Monthly Cashflow Bar Chart -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 uppercase tracking-wider">Arus Kas Bulanan</h4>
-          <div class="relative h-60">
-            <canvas id="barChartCashflow"></canvas>
-          </div>
+            <button onclick="switchTab('input')" id="tabBtn-input" class="admin-only hidden tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-emerald-600"></i> Input Transaksi
+            </button>
+            <button onclick="switchTab('settings')" id="tabBtn-settings" class="admin-only hidden tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 whitespace-nowrap flex items-center gap-2">
+                <i class="fa-solid fa-sliders"></i> Pengaturan
+            </button>
         </div>
 
-        <!-- Expense Doughnut Chart -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 uppercase tracking-wider">Proporsi Pengeluaran per Kategori</h4>
-          <div class="relative h-60">
-            <canvas id="doughnutChartCategory"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Rekap Summary Tables -->
-      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
-        <h4 class="text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider border-b dark:border-gray-700 pb-2">
-          Ringkasan per Kategori (Bulan Ini)
-        </h4>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left">
-            <thead class="text-gray-500 dark:text-gray-400 border-b dark:border-gray-700">
-              <tr>
-                <th class="py-2 px-2">Kategori</th>
-                <th class="py-2 px-2 text-right">Pemasukan</th>
-                <th class="py-2 px-2 text-right">Pengeluaran</th>
-              </tr>
-            </thead>
-            <tbody id="categorySummaryTableBody" class="divide-y divide-gray-100 dark:divide-gray-700">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 shadow-lg">
-    <div class="max-w-4xl mx-auto flex items-center justify-around text-center py-2 px-1">
-      <button onclick="switchTab('input')" id="nav-input" class="admin-only hidden nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
-        <i class="fas fa-plus-circle text-lg"></i>
-        <span class="text-[10px] font-medium mt-0.5">Input</span>
-      </button>
-
-      <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn flex-1 flex flex-col items-center py-1 text-emerald-600 dark:text-emerald-400 font-bold">
-        <i class="fas fa-list-check text-lg"></i>
-        <span class="text-[10px] font-medium mt-0.5">Riwayat</span>
-      </button>
-
-      <button onclick="switchTab('alokasi')" id="nav-alokasi" class="nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
-        <i class="fas fa-vault text-lg"></i>
-        <span class="text-[10px] font-medium mt-0.5">Alokasi</span>
-      </button>
-
-      <button onclick="switchTab('pengurus')" id="nav-pengurus" class="nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
-        <i class="fas fa-users-gear text-lg"></i>
-        <span class="text-[10px] font-medium mt-0.5">Pengurus</span>
-      </button>
-
-      <button onclick="switchTab('grafik')" id="nav-grafik" class="nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
-        <i class="fas fa-chart-pie text-lg"></i>
-        <span class="text-[10px] font-medium mt-0.5">Grafik</span>
-      </button>
-
-      <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="admin-only hidden nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
-        <i class="fas fa-gear text-lg"></i>
-        <span class="text-[10px] font-medium mt-0.5">Pengaturan</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- MODAL: LOGIN ADMIN -->
-  <div id="loginModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4 border border-gray-100 dark:border-gray-700">
-      <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
-        <h3 class="font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-          <i class="fas fa-user-shield text-emerald-600"></i> Login Admin BAZIS
-        </h3>
-        <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-xmark"></i></button>
-      </div>
-
-      <div id="loginErrorMsg" class="hidden text-xs bg-red-100 text-red-700 p-2.5 rounded-lg"></div>
-
-      <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
-          <input type="text" id="loginUser" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
-          <input type="password" id="loginPass" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-        </div>
-
-        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition">
-          Masuk Admin
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: ALLOCATION EDIT/ADD -->
-  <div id="allocationModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4 border border-gray-100 dark:border-gray-700">
-      <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
-        <h3 id="allocModalTitle" class="font-bold text-gray-800 dark:text-gray-100">Tambah Pos Alokasi</h3>
-        <button onclick="closeModal('allocationModal')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-xmark"></i></button>
-      </div>
-
-      <form onsubmit="handleSaveAllocation(event)" class="space-y-3">
-        <input type="hidden" id="allocId">
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Pos / Program</label>
-          <input type="text" id="allocName" required placeholder="Contoh: Operasional & Listrik" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Jumlah Alokasi (Rp)</label>
-          <input type="number" id="allocAmount" required min="0" placeholder="0" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
-        </div>
-
-        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition">
-          Simpan Pos Alokasi
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: ALERT / MESSAGE -->
-  <div id="alertModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-xs w-full p-5 shadow-xl text-center space-y-3 border border-gray-100 dark:border-gray-700">
-      <div id="alertIconContainer" class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-xl">
-        <i id="alertIcon" class="fas fa-circle-check"></i>
-      </div>
-      <h4 id="alertTitle" class="font-bold text-gray-800 dark:text-gray-100 text-sm">Pemberitahuan</h4>
-      <p id="alertMsg" class="text-xs text-gray-600 dark:text-gray-300"></p>
-      <button onclick="closeModal('alertModal')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs transition">
-        Tutup
-      </button>
-    </div>
-  </div>
-
-  <!-- FIREBASE INTEGRATION SCRIPT -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // App ID & Configuration setup
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'bazis-alfajar-default';
-    let firebaseConfig = null;
-    
-    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-      try {
-        firebaseConfig = JSON.parse(__firebase_config);
-      } catch (e) {
-        console.warn("Invalid firebase config parsed", e);
-      }
-    }
-
-    // Default Fallback Firebase Demo config if none exists
-    if (!firebaseConfig) {
-      firebaseConfig = {
-        apiKey: "AIzaSyDemoConfigKeyForBazisAlFajar123",
-        authDomain: "bazis-al-fajar.firebaseapp.com",
-        projectId: "bazis-al-fajar",
-        storageBucket: "bazis-al-fajar.appspot.com",
-        messagingSenderId: "123456789",
-        appId: "1:123456789:web:abcdef"
-      };
-    }
-
-    let db = null;
-    let auth = null;
-    let isFirebaseConnected = false;
-
-    try {
-      const app = initializeApp(firebaseConfig);
-      auth = getAuth(app);
-      db = getFirestore(app);
-
-      // Auth flow
-      const initAuth = async () => {
-        try {
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-          } else {
-            await signInAnonymously(auth);
-          }
-          isFirebaseConnected = true;
-          setupFirestoreListeners();
-        } catch (authErr) {
-          console.warn("Firebase Auth Error, falling back to local memory mode:", authErr);
-          isFirebaseConnected = false;
-          window.updateOnlineStatus(false);
-        }
-      };
-
-      initAuth();
-    } catch (err) {
-      console.warn("Firebase Initialization error, operating offline/local:", err);
-      isFirebaseConnected = false;
-      window.updateOnlineStatus(false);
-    }
-
-    // Paths
-    const getPublicCollectionPath = (collName) => `artifacts/${appId}/public/data/${collName}`;
-
-    function setupFirestoreListeners() {
-      if (!db) return;
-
-      // 1. Transactions Listener
-      const txCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'transactions');
-      onSnapshot(txCollRef, (snapshot) => {
-        const txList = [];
-        snapshot.forEach(docSnap => {
-          txList.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        window.syncTransactionsFromRemote(txList);
-        window.updateOnlineStatus(true);
-      }, (error) => {
-        console.warn("Tx listener error:", error);
-        window.updateOnlineStatus(false);
-      });
-
-      // 2. Allocations Listener
-      const allocCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'allocations');
-      onSnapshot(allocCollRef, (snapshot) => {
-        const allocList = [];
-        snapshot.forEach(docSnap => {
-          allocList.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        window.syncAllocationsFromRemote(allocList);
-      }, (error) => {
-        console.warn("Alloc listener error:", error);
-      });
-    }
-
-    // Global Functions for Cloud Syncing
-    window.cloudSaveTransaction = async function(txData) {
-      if (isFirebaseConnected && db) {
-        try {
-          const txDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'transactions', txData.id);
-          await setDoc(txDocRef, txData);
-        } catch(e) { console.error("Cloud Tx save failed:", e); }
-      }
-    };
-
-    window.cloudDeleteTransaction = async function(id) {
-      if (isFirebaseConnected && db) {
-        try {
-          const txDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'transactions', id);
-          await deleteDoc(txDocRef);
-        } catch(e) { console.error("Cloud Tx delete failed:", e); }
-      }
-    };
-
-    window.cloudSaveAllocation = async function(allocData) {
-      if (isFirebaseConnected && db) {
-        try {
-          const allocDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'allocations', allocData.id);
-          await setDoc(allocDocRef, allocData);
-        } catch(e) { console.error("Cloud Alloc save failed:", e); }
-      }
-    };
-
-    window.cloudDeleteAllocation = async function(id) {
-      if (isFirebaseConnected && db) {
-        try {
-          const allocDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'allocations', id);
-          await deleteDoc(allocDocRef);
-        } catch(e) { console.error("Cloud Alloc delete failed:", e); }
-      }
-    };
-
-    window.cloudBatchReset = async function(txList, allocList) {
-      if (isFirebaseConnected && db) {
-        // Delete old and write new
-        for (const t of txList) {
-          const ref = doc(db, 'artifacts', appId, 'public', 'data', 'transactions', t.id);
-          await setDoc(ref, t);
-        }
-        for (const a of allocList) {
-          const ref = doc(db, 'artifacts', appId, 'public', 'data', 'allocations', a.id);
-          await setDoc(ref, a);
-        }
-      }
-    };
-  </script>
-
-  <!-- MAIN APPLICATION JS -->
-  <script>
-    // --- STATE MANAGEMENT ---
-    let isAdmin = false;
-    let currentDate = new Date(); // Controls month view
-    let transactions = [];
-    let allocations = [];
-
-    const CATEGORIES = {
-      in: [
-        { id: 'Infaq Jumat', name: 'Infaq Jumat', icon: 'fa-hand-holding-dollar' },
-        { id: 'Infaq Harian', name: 'Infaq Harian / Kotak', icon: 'fa-box-archive' },
-        { id: 'Zakat Fitrah/Mal', name: 'Zakat Fitrah / Mal', icon: 'fa-wheat-awn' },
-        { id: 'Sedekah / Donasi', name: 'Sedekah / Donasi Hamba Allah', icon: 'fa-heart text-rose-500' },
-        { id: 'Lainnya In', name: 'Pemasukan Lainnya', icon: 'fa-circle-plus' }
-      ],
-      out: [
-        { id: 'Operasional & Kebersihan', name: 'Operasional & Kebersihan', icon: 'fa-broom' },
-        { id: 'Listrik & Air', name: 'Listrik & Air', icon: 'fa-bolt text-amber-500' },
-        { id: 'Pembangunan & Perbaikan', name: 'Pembangunan & Perbaikan', icon: 'fa-screwdriver-wrench' },
-        { id: 'Santunan & Sosial', name: 'Santunan & Kegiatan Sosial', icon: 'fa-hands-holding-child' },
-        { id: 'Pengajian & Acara', name: 'Pengajian / Hari Besar Islam', icon: 'fa-book-quran' },
-        { id: 'Lainnya Out', name: 'Pengeluaran Lainnya', icon: 'fa-circle-minus' }
-      ]
-    };
-
-    // Default Initial Seed
-    const DEFAULT_TRANSACTIONS = [
-      { id: 'tx-1', date: '2026-10-02', title: 'Infaq Kotak Jumat Perdana', amount: 1450000, type: 'in', category: 'Infaq Jumat', note: 'Penghitungan setelah sholat jumat' },
-      { id: 'tx-2', date: '2026-10-05', title: 'Pembayaran Rekening Listrik Masjid', amount: 350000, type: 'out', category: 'Listrik & Air', note: 'Token PLN 350rb' },
-      { id: 'tx-3', date: '2026-10-09', title: 'Infaq Kotak Jumat kedua', amount: 1200000, type: 'in', category: 'Infaq Jumat', note: 'Lancar' },
-      { id: 'tx-4', date: '2026-10-12', title: 'Beli Air Galon & Alat Kebersihan', amount: 65000, type: 'out', category: 'Operasional & Kebersihan', note: '3 Galon + Sabun Pel' },
-      { id: 'tx-5', date: '2026-10-15', title: 'Donasi Hamba Allah via Transfer BSI', amount: 500000, type: 'in', category: 'Sedekah / Donasi', note: 'Transfer BSI' }
-    ];
-
-    const DEFAULT_ALLOCATIONS = [
-      { id: 'alloc-1', name: 'Kas Operasional & Kebersihan', amount: 1500000 },
-      { id: 'alloc-2', name: 'Dana Santunan Anak Yatim', amount: 2000000 },
-      { id: 'alloc-3', name: 'Cadangan Pemeliharaan Bangunan', amount: 1000000 }
-    ];
-
-    // --- INITIALIZATION ---
-    window.onload = function() {
-      // Load Theme
-      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-        updateThemeIcon(true);
-      } else {
-        document.documentElement.classList.remove('dark');
-        updateThemeIcon(false);
-      }
-
-      // Load Local Storage Initial Fallback
-      const localTx = localStorage.getItem('bazis_transactions');
-      transactions = localTx ? JSON.parse(localTx) : DEFAULT_TRANSACTIONS;
-
-      const localAlloc = localStorage.getItem('bazis_allocations');
-      allocations = localAlloc ? JSON.parse(localAlloc) : DEFAULT_ALLOCATIONS;
-
-      // Set default input date to today
-      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-
-      // Populate Category Dropdowns
-      updateCategoryDropdown();
-      populateFilterCategories();
-
-      // Load logos if stored
-      if (localStorage.getItem('logo_masjid')) {
-        document.getElementById('logoMasjid').src = localStorage.getItem('logo_masjid');
-      }
-      if (localStorage.getItem('logo_bazis')) {
-        document.getElementById('logoBazis').src = localStorage.getItem('logo_bazis');
-      }
-
-      // Initial Refresh & UI Render
-      refreshAllViews();
-    };
-
-    // --- REALTIME SYNC CALLBACKS FROM FIREBASE ---
-    window.syncTransactionsFromRemote = function(remoteList) {
-      if (remoteList && remoteList.length > 0) {
-        transactions = remoteList;
-        localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
-      }
-      refreshAllViews();
-    };
-
-    window.syncAllocationsFromRemote = function(remoteList) {
-      if (remoteList && remoteList.length > 0) {
-        allocations = remoteList;
-        localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
-      }
-      renderAllocations();
-    };
-
-    window.updateOnlineStatus = function(isOnline) {
-      const badge = document.getElementById('statusBadge');
-      if (isOnline) {
-        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Synchronized`;
-        badge.className = "text-[10px] bg-emerald-600/80 border border-emerald-400/40 text-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1";
-      } else {
-        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span> Local Mode`;
-        badge.className = "text-[10px] bg-amber-800/80 border border-amber-400/40 text-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1";
-      }
-    };
-
-    // --- REFRESH VIEWS ---
-    function refreshAllViews() {
-      updateSummaryCards();
-      renderHistory();
-      renderAllocations();
-      renderCharts();
-    }
-
-    // --- THEME & UI HELPER ---
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      updateThemeIcon(isDark);
-      renderCharts(); // Re-render charts for dark mode contrast
-    }
-
-    function updateThemeIcon(isDark) {
-      const icon = document.getElementById('themeIcon');
-      if (isDark) {
-        icon.className = 'fas fa-sun';
-      } else {
-        icon.className = 'fas fa-moon';
-      }
-    }
-
-    function formatRupiah(num) {
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0);
-    }
-
-    function switchTab(tabName) {
-      // Hide all tabs
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      // Show selected
-      const selectedTab = document.getElementById(`tab-${tabName}`);
-      if (selectedTab) selectedTab.classList.remove('hidden');
-
-      // Update Nav Buttons
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
-        btn.classList.add('text-gray-500', 'dark:text-gray-400');
-      });
-
-      const activeNav = document.getElementById(`nav-${tabName}`);
-      if (activeNav) {
-        activeNav.classList.remove('text-gray-500', 'dark:text-gray-400');
-        activeNav.classList.add('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
-      }
-
-      if (tabName === 'grafik') {
-        renderCharts();
-      }
-    }
-
-    // --- ADMIN AUTHENTICATION ---
-    function handleAuthAction() {
-      if (isAdmin) {
-        // Logout
-        isAdmin = false;
-        updateAdminUI();
-        showAlert("Berhasil Logout", "Anda kembali ke Mode Lihat Publik.");
-      } else {
-        // Show Login Modal
-        document.getElementById('loginUser').value = '';
-        document.getElementById('loginPass').value = '';
-        document.getElementById('loginErrorMsg').classList.add('hidden');
-        openModal('loginModal');
-      }
-    }
-
-    function handleLoginSubmit(e) {
-      e.preventDefault();
-      const u = document.getElementById('loginUser').value.trim();
-      const p = document.getElementById('loginPass').value.trim();
-
-      if (u === 'bazisalf' && p === 'gengbazis') {
-        isAdmin = true;
-        closeModal('loginModal');
-        updateAdminUI();
-        showAlert("Login Berhasil", "Selamat datang Admin BAZIS Masjid Al-Fajar!");
-      } else {
-        const errEl = document.getElementById('loginErrorMsg');
-        errEl.innerText = "Username atau Password salah!";
-        errEl.classList.remove('hidden');
-      }
-    }
-
-    function updateAdminUI() {
-      const authBtn = document.getElementById('authBtn');
-      const authText = document.getElementById('authText');
-      const authIcon = document.getElementById('authIcon');
-
-      const adminElements = document.querySelectorAll('.admin-only');
-
-      if (isAdmin) {
-        authText.innerText = "Logout Admin";
-        authIcon.className = "fas fa-right-from-bracket text-xs text-rose-300";
-        authBtn.className = "flex items-center space-x-1 text-xs px-3 py-1.5 rounded-lg bg-rose-700 hover:bg-rose-600 border border-rose-400/40 text-white transition";
-
-        adminElements.forEach(el => el.classList.remove('hidden'));
-      } else {
-        authText.innerText = "Admin Login";
-        authIcon.className = "fas fa-lock text-xs";
-        authBtn.className = "flex items-center space-x-1 text-xs px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 dark:bg-gray-700 dark:hover:bg-gray-600 border border-emerald-500/30 transition";
-
-        adminElements.forEach(el => el.classList.add('hidden'));
-        
-        // If current tab is admin-only, switch to history
-        const activeTab = document.querySelector('.tab-content:not(.hidden)');
-        if (activeTab && (activeTab.id === 'tab-input' || activeTab.id === 'tab-pengaturan')) {
-          switchTab('riwayat');
-        }
-      }
-
-      renderHistory();
-      renderAllocations();
-    }
-
-    // --- MONTH NAVIGATION ---
-    function changeMonth(delta) {
-      currentDate.setMonth(currentDate.getMonth() + delta);
-      updateSummaryCards();
-      renderHistory();
-      renderCharts();
-    }
-
-    function updateSummaryCards() {
-      const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-      const y = currentDate.getFullYear();
-      const m = currentDate.getMonth();
-
-      document.getElementById('currentMonthDisplay').innerText = `${monthNames[m]} ${y}`;
-
-      // Calculate Total All Time
-      let totalIn = 0;
-      let totalOut = 0;
-
-      // Monthly Total
-      let monthIn = 0;
-      let monthOut = 0;
-
-      transactions.forEach(t => {
-        const amt = Number(t.amount) || 0;
-        if (t.type === 'in') totalIn += amt;
-        else if (t.type === 'out') totalOut += amt;
-
-        const d = new Date(t.date);
-        if (d.getFullYear() === y && d.getMonth() === m) {
-          if (t.type === 'in') monthIn += amt;
-          else if (t.type === 'out') monthOut += amt;
-        }
-      });
-
-      const balance = totalIn - totalOut;
-
-      document.getElementById('totalBalanceText').innerText = formatRupiah(balance);
-      document.getElementById('totalIncomeText').innerText = formatRupiah(totalIn);
-      document.getElementById('totalExpenseText').innerText = formatRupiah(totalOut);
-
-      document.getElementById('monthlySummarySub').innerText = `Masuk: ${formatRupiah(monthIn)} | Keluar: ${formatRupiah(monthOut)}`;
-    }
-
-    // --- INPUT TAB LOGIC & PARSER ---
-    function updateCategoryDropdown() {
-      const type = document.getElementById('txType').value;
-      const catSelect = document.getElementById('txCategory');
-      catSelect.innerHTML = '';
-
-      CATEGORIES[type].forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
-        catSelect.appendChild(opt);
-      });
-    }
-
-    function parseSmartText() {
-      const text = document.getElementById('smartInput').value.trim();
-      if (!text) return;
-
-      // Basic regex parser: extract numbers at end
-      const match = text.match(/(.*?)\s+(\d+[\d\.]*)$/);
-      if (match) {
-        const title = match[1].trim();
-        const rawAmount = match[2].replace(/\./g, '');
-        const amount = parseInt(rawAmount, 10);
-
-        if (title && !isNaN(amount)) {
-          document.getElementById('txTitle').value = title;
-          document.getElementById('txAmount').value = amount;
-
-          // Auto detect type
-          const lower = title.toLowerCase();
-          if (lower.includes('beli') || lower.includes('bayar') || lower.includes('listrik') || lower.includes('keluar') || lower.includes('pembelian')) {
-            document.getElementById('txType').value = 'out';
-          } else {
-            document.getElementById('txType').value = 'in';
-          }
-          updateCategoryDropdown();
-
-          showAlert("Auto Parser Berhasil", `Berhasil mengekstrak "${title}" sebesar ${formatRupiah(amount)}.`);
-        }
-      } else {
-        showAlert("Format Parser", "Gunakan format contoh: 'infaq jumat 1250000'");
-      }
-    }
-
-    async function saveTransaction(e) {
-      e.preventDefault();
-      if (!isAdmin) return;
-
-      const type = document.getElementById('txType').value;
-      const date = document.getElementById('txDate').value;
-      const title = document.getElementById('txTitle').value.trim();
-      const amount = parseFloat(document.getElementById('txAmount').value) || 0;
-      const category = document.getElementById('txCategory').value;
-      const note = document.getElementById('txNote').value.trim();
-
-      const newTx = {
-        id: 'tx-' + Date.now(),
-        date,
-        type,
-        title,
-        amount,
-        category,
-        note
-      };
-
-      transactions.push(newTx);
-      localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
-
-      // Cloud save
-      if (window.cloudSaveTransaction) {
-        await window.cloudSaveTransaction(newTx);
-      }
-
-      // Reset Form
-      document.getElementById('transactionForm').reset();
-      document.getElementById('smartInput').value = '';
-      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
-
-      refreshAllViews();
-      showAlert("Transaksi Disimpan", "Data transaksi berhasil disimpan ke laporan.");
-      switchTab('riwayat');
-    }
-
-    async function deleteTransaction(id) {
-      if (!isAdmin) return;
-
-      transactions = transactions.filter(t => t.id !== id);
-      localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
-
-      if (window.cloudDeleteTransaction) {
-        await window.cloudDeleteTransaction(id);
-      }
-
-      refreshAllViews();
-      showAlert("Dihapus", "Transaksi telah dihapus.");
-    }
-
-    // --- HISTORY TAB LOGIC ---
-    function populateFilterCategories() {
-      const filterSelect = document.getElementById('filterCategory');
-      filterSelect.innerHTML = '<option value="all">Semua Kategori</option>';
-
-      const allCats = [...CATEGORIES.in, ...CATEGORIES.out];
-      allCats.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
-        filterSelect.appendChild(opt);
-      });
-    }
-
-    function renderHistory() {
-      const container = document.getElementById('historyListContainer');
-      container.innerHTML = '';
-
-      const searchQuery = document.getElementById('searchHistory').value.toLowerCase();
-      const typeFilter = document.getElementById('filterType').value;
-      const catFilter = document.getElementById('filterCategory').value;
-      const scopeFilter = document.getElementById('filterScope').value;
-
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-
-      // Filter logic
-      const filtered = transactions.filter(t => {
-        const tDate = new Date(t.date);
-
-        if (scopeFilter === 'month') {
-          if (tDate.getFullYear() !== year || tDate.getMonth() !== month) return false;
-        }
-
-        if (typeFilter !== 'all' && t.type !== typeFilter) return false;
-        if (catFilter !== 'all' && t.category !== catFilter) return false;
-
-        if (searchQuery) {
-          const matchTitle = (t.title || '').toLowerCase().includes(searchQuery);
-          const matchNote = (t.note || '').toLowerCase().includes(searchQuery);
-          const matchCat = (t.category || '').toLowerCase().includes(searchQuery);
-          if (!matchTitle && !matchNote && !matchCat) return false;
-        }
-
-        return true;
-      });
-
-      // Sort descending by date
-      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 text-center text-gray-400 border border-gray-100 dark:border-gray-700">
-            <i class="fas fa-folder-open text-3xl mb-2"></i>
-            <p class="text-xs">Tidak ada data transaksi ditemukan.</p>
-          </div>
-        `;
-        return;
-      }
-
-      // Group by Date Headers
-      let currentGroupDate = '';
-
-      filtered.forEach(t => {
-        const formattedDate = new Date(t.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-        if (formattedDate !== currentGroupDate) {
-          currentGroupDate = formattedDate;
-          const groupHeader = document.createElement('div');
-          groupHeader.className = 'text-[11px] font-bold text-gray-500 dark:text-gray-400 pt-2 pb-1 uppercase tracking-wider flex items-center gap-1.5';
-          groupHeader.innerHTML = `<i class="fas fa-calendar-day text-emerald-600"></i> ${formattedDate}`;
-          container.appendChild(groupHeader);
-        }
-
-        // Find Icon
-        const catObj = [...CATEGORIES.in, ...CATEGORIES.out].find(c => c.id === t.category);
-        const iconClass = catObj ? catObj.icon : 'fa-receipt';
-
-        const isIn = t.type === 'in';
-        const card = document.createElement('div');
-        card.className = "bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between gap-3 transition hover:border-emerald-200";
-
-        card.innerHTML = `
-          <div class="flex items-center space-x-3 overflow-hidden">
-            <div class="w-10 h-10 rounded-xl ${isIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'} flex items-center justify-center shrink-0 text-base">
-              <i class="fas ${iconClass}"></i>
+        <!-- TAB CONTENT 1: RIWAYAT TRANSAKSI -->
+        <div id="tabContent-history" class="tab-content space-y-4">
+            <!-- Filter & Search Bar -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">Cari Keterangan</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="filterSearch" oninput="renderTransactions()" placeholder="Cari transaksi..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">Jenis Transaksi</label>
+                        <select id="filterType" onchange="renderTransactions()" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                            <option value="ALL">Semua (Pemasukan & Pengeluaran)</option>
+                            <option value="INCOME">Pemasukan (Masuk)</option>
+                            <option value="EXPENSE">Pengeluaran (Keluar)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">Kategori</label>
+                        <select id="filterCategory" onchange="renderTransactions()" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                            <option value="ALL">Semua Kategori</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">Bulan & Tahun</label>
+                        <input type="month" id="filterMonth" onchange="renderTransactions()" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button onclick="resetFilters()" class="text-xs text-slate-500 hover:text-emerald-600 underline">
+                        Reset Filter
+                    </button>
+                </div>
             </div>
-            <div class="truncate">
-              <h4 class="font-semibold text-xs sm:text-sm text-gray-800 dark:text-gray-100 truncate">${t.title}</h4>
-              <p class="text-[11px] text-gray-400 dark:text-gray-400">${t.category || 'Umum'}</p>
-              ${t.note ? `<p class="text-[11px] text-gray-500 dark:text-gray-300 mt-0.5 truncate">💬 ${t.note}</p>` : ''}
+
+            <!-- Transaction List -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div class="p-3 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Daftar Transaksi</h3>
+                    <span id="transactionCountBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">0 Data</span>
+                </div>
+                <div id="transactionList" class="divide-y divide-slate-100 dark:divide-slate-700/60 max-h-[500px] overflow-y-auto">
+                    <!-- Dynamic rendering -->
+                </div>
             </div>
-          </div>
+        </div>
 
-          <div class="text-right shrink-0">
-            <span class="font-bold text-xs sm:text-sm ${isIn ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'} block">
-              ${isIn ? '+' : '-'}${formatRupiah(t.amount)}
-            </span>
-            ${isAdmin ? `
-              <button onclick="deleteTransaction('${t.id}')" class="text-[10px] text-rose-500 hover:text-rose-700 mt-1 font-medium">
-                <i class="fas fa-trash-can mr-1"></i>Hapus
-              </button>
-            ` : ''}
-          </div>
-        `;
-
-        container.appendChild(card);
-      });
-    }
-
-    // --- ALLOCATION TAB LOGIC ---
-    function renderAllocations() {
-      const container = document.getElementById('allocationCardsList');
-      container.innerHTML = '';
-
-      let totalSum = 0;
-
-      allocations.forEach(a => {
-        totalSum += Number(a.amount) || 0;
-
-        const card = document.createElement('div');
-        card.className = 'bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-2';
-
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-xs sm:text-sm text-gray-800 dark:text-gray-100">${a.name}</h4>
-            <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">${formatRupiah(a.amount)}</span>
-          </div>
-
-          ${isAdmin ? `
-            <div class="pt-2 border-t dark:border-gray-700 flex justify-end gap-2">
-              <button onclick="adjustAllocAmount('${a.id}', 500000)" class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-200 text-[10px] font-bold rounded">
-                +500k
-              </button>
-              <button onclick="adjustAllocAmount('${a.id}', -500000)" class="px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-200 text-[10px] font-bold rounded">
-                -500k
-              </button>
-              <button onclick="openAllocationModal('${a.id}')" class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-[10px] font-bold rounded">
-                Edit
-              </button>
-              <button onclick="deleteAllocation('${a.id}')" class="px-2 py-1 bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-200 text-[10px] font-bold rounded">
-                Hapus
-              </button>
+        <!-- TAB CONTENT 2: POS ALOKASI DANA -->
+        <div id="tabContent-allocation" class="tab-content hidden space-y-4">
+            <div class="bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300">
+                <i class="fa-solid fa-circle-info mr-1"></i>
+                Setiap penerimaan zakat/infaq disalurkan secara transparan ke pos alokasi dana berikut ini.
             </div>
-          ` : ''}
-        `;
 
-        container.appendChild(card);
-      });
+            <div id="allocationGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dynamic Allocation Cards -->
+            </div>
+        </div>
 
-      document.getElementById('totalAllocationSum').innerText = formatRupiah(totalSum);
-    }
+        <!-- TAB CONTENT 3: PENGURUS -->
+        <div id="tabContent-committee" class="tab-content hidden space-y-4">
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
+                <div class="text-center max-w-xl mx-auto mb-6">
+                    <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">SUSUNAN PENGURUS BAZIS</h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Masjid Al-Fajar Periode 2023 - 2027</p>
+                </div>
 
-    function openAllocationModal(id = null) {
-      if (!isAdmin) return;
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- KETUA -->
+                    <div class="bg-emerald-50/50 dark:bg-slate-700/40 border border-emerald-200 dark:border-emerald-800 p-4 rounded-xl text-center flex flex-col items-center">
+                        <div class="w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center text-lg font-bold mb-2 shadow">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Ketua BAZIS</span>
+                        <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100 mt-1">Eko Mardianto</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Penanggung Jawab Utama BAZIS</p>
+                    </div>
 
-      if (id) {
-        const item = allocations.find(a => a.id === id);
-        if (item) {
-          document.getElementById('allocModalTitle').innerText = 'Edit Pos Alokasi';
-          document.getElementById('allocId').value = item.id;
-          document.getElementById('allocName').value = item.name;
-          document.getElementById('allocAmount').value = item.amount;
-        }
-      } else {
-        document.getElementById('allocModalTitle').innerText = 'Tambah Pos Alokasi Baru';
-        document.getElementById('allocId').value = '';
-        document.getElementById('allocName').value = '';
-        document.getElementById('allocAmount').value = '';
-      }
+                    <!-- SEKRETARIS -->
+                    <div class="bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-center flex flex-col items-center">
+                        <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mb-2 shadow">
+                            <i class="fa-solid fa-file-pen"></i>
+                        </div>
+                        <span class="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Sekretaris</span>
+                        <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100 mt-1">Maulana RH</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Administrasi & Pendataan</p>
+                    </div>
 
-      openModal('allocationModal');
-    }
+                    <!-- BENDAHARA -->
+                    <div class="bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-center flex flex-col items-center">
+                        <div class="w-12 h-12 bg-amber-600 text-white rounded-full flex items-center justify-center text-lg font-bold mb-2 shadow">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <span class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Bendahara</span>
+                        <h3 class="text-base font-extrabold text-slate-800 dark:text-slate-100 mt-1">M. Fathur Rohman</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pengelolaan Keuangan & Kas</p>
+                    </div>
+                </div>
 
-    async function handleSaveAllocation(e) {
-      e.preventDefault();
-      if (!isAdmin) return;
+                <!-- ANGGOTA PENGURUS -->
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 text-center">Anggota Pengurus BAZIS</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center">
+                            <div class="text-xs font-bold text-slate-400 mb-1">1</div>
+                            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">Nur Cholis</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center">
+                            <div class="text-xs font-bold text-slate-400 mb-1">2</div>
+                            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">Muhalif</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center">
+                            <div class="text-xs font-bold text-slate-400 mb-1">3</div>
+                            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">Supriyadi</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center">
+                            <div class="text-xs font-bold text-slate-400 mb-1">4</div>
+                            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">Ari Nastoro</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center">
+                            <div class="text-xs font-bold text-slate-400 mb-1">5</div>
+                            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">Muhawan</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-center">
+                            <div class="text-xs font-bold text-slate-400 mb-1">6</div>
+                            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">Sarto Ardi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      const id = document.getElementById('allocId').value;
-      const name = document.getElementById('allocName').value.trim();
-      const amount = parseFloat(document.getElementById('allocAmount').value) || 0;
+        <!-- TAB CONTENT 4: GRAFIK & LAPORAN -->
+        <div id="tabContent-reports" class="tab-content hidden space-y-4">
+            <!-- Admin Export Buttons -->
+            <div class="admin-only hidden bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-wrap gap-2 justify-between items-center">
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Ekspor Laporan (Khusus Admin):</span>
+                <div class="flex gap-2">
+                    <button onclick="exportToCSV()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <i class="fa-solid fa-file-csv"></i> Ekspor CSV
+                    </button>
+                    <button onclick="exportToPDF()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <i class="fa-solid fa-file-pdf"></i> Cetak / Simpan PDF
+                    </button>
+                </div>
+            </div>
 
-      let allocItem;
-      if (id) {
-        allocItem = allocations.find(a => a.id === id);
-        if (allocItem) {
-          allocItem.name = name;
-          allocItem.amount = amount;
-        }
-      } else {
-        allocItem = {
-          id: 'alloc-' + Date.now(),
-          name,
-          amount
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Bar Chart -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-3">Arus Kas Per Bulan</h3>
+                    <div class="relative h-64">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-3">Distribusi Per Kategori</h3>
+                    <div class="relative h-64 flex items-center justify-center">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 5: INPUT TRANSAKSI (ADMIN ONLY) -->
+        <div id="tabContent-input" class="tab-content hidden space-y-4">
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm max-w-2xl mx-auto">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
+                    <h2 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-emerald-600"></i> Form Transaksi Baru
+                    </h2>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Mode Admin</span>
+                </div>
+
+                <!-- Quick Smart Input Text -->
+                <div class="mb-4 p-3 bg-emerald-50 dark:bg-slate-900 border border-emerald-200 dark:border-emerald-800/60 rounded-xl">
+                    <label class="text-xs font-bold text-emerald-800 dark:text-emerald-400 block mb-1">
+                        <i class="fa-solid fa-bolt mr-1"></i> Input Teks Cepat (Quick Input)
+                    </label>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-2">Contoh: <code class="bg-white dark:bg-slate-800 px-1 rounded border">infaq jumat 1250000</code> atau <code class="bg-white dark:bg-slate-800 px-1 rounded border">santunan yatim 500000</code></p>
+                    <div class="flex gap-2">
+                        <input type="text" id="quickInputText" placeholder="Ketik keterangan & nominal..." class="flex-1 px-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                        <button onclick="parseQuickInput()" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">Proses</button>
+                    </div>
+                </div>
+
+                <form id="transactionForm" onsubmit="handleTransactionSubmit(event)" class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Jenis Transaksi</label>
+                            <select id="formType" required onchange="updateCategoryDropdownOptions()" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 font-semibold">
+                                <option value="INCOME">Pemasukan (+)</option>
+                                <option value="EXPENSE">Pengeluaran (-)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Tanggal</label>
+                            <input type="date" id="formDate" required class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Kategori</label>
+                        <select id="formCategory" required class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Nominal (Rp)</label>
+                        <input type="number" id="formAmount" required min="1" placeholder="Masukkan jumlah uang" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 font-bold text-emerald-700 dark:text-emerald-400">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Keterangan / Catatan Tambahan</label>
+                        <textarea id="formDescription" rows="2" placeholder="Catatan opsional (misal: H. Ahmad - Infaq Terikat)..." class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"></textarea>
+                    </div>
+
+                    <!-- Target Allocation Pos (If Expense) -->
+                    <div id="allocationSelectContainer" class="hidden">
+                        <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Pengurangan Langsung Pos Alokasi (Opsional)</label>
+                        <select id="formAllocation" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                            <option value="">-- Tidak Mengurangi Pos Alokasi Khusus --</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" id="btnSaveTransaction" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Ke Firestore Cloud
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 6: PENGATURAN & FIRESTORE CLOUD MANAGEMENT (ADMIN ONLY) -->
+        <div id="tabContent-settings" class="tab-content hidden space-y-4">
+            <!-- Firestore Credentials Panel -->
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud text-emerald-600"></i> Pengaturan Koneksi Firebase Firestore
+                    </h3>
+                    <span id="settingsCloudBadge" class="text-xs px-2 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Default Connected</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                    Secara default, aplikasi menggunakan database Firebase BAZIS Masjid Al-Fajar. Anda dapat mengubah konfigurasi kustom Firebase milik pribadi jika dibutuhkan.
+                </p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">JSON Config Firebase (Opsional / Custom)</label>
+                        <textarea id="firebaseConfigInput" rows="4" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..."}' class="w-full p-2.5 text-xs font-mono bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"></textarea>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="saveCustomFirebaseConfig()" class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-save"></i> Simpan Config Kustom
+                        </button>
+                        <button onclick="resetFirebaseConfigToDefault()" class="px-3 py-2 bg-slate-600 text-white rounded-lg text-xs font-semibold hover:bg-slate-700 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate-left"></i> Gunakan Config Default
+                        </button>
+                        <button onclick="seedInitialCloudData()" class="px-3 py-2 bg-amber-600 text-white rounded-lg text-xs font-semibold hover:bg-amber-700 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-database"></i> Sinkronkan / Inisialisasi Data Default ke Cloud
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Pos Alokasi & Kategori -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Manage Pos Alokasi -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Tambah Pos Alokasi Baru</h3>
+                    <form onsubmit="handleAddAllocation(event)" class="space-y-2">
+                        <input type="text" id="newAllocTitle" required placeholder="Nama Pos (misal: Beasiswa Santri)" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg">
+                        <input type="number" id="newAllocBalance" required min="0" placeholder="Saldo Awal (Rp)" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg">
+                        <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition">Tambah Pos Alokasi</button>
+                    </form>
+                </div>
+
+                <!-- Manage Kategori -->
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Tambah Kategori Baru</h3>
+                    <form onsubmit="handleAddCategory(event)" class="space-y-2">
+                        <input type="text" id="newCatName" required placeholder="Nama Kategori (misal: Zakat Maal)" class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg">
+                        <select id="newCatType" required class="w-full px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg">
+                            <option value="INCOME">Pemasukan</option>
+                            <option value="EXPENSE">Pengeluaran</option>
+                        </select>
+                        <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition">Tambah Kategori</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MOBILE NAVIGATION BOTTOM BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 shadow-lg sm:hidden">
+        <div class="grid grid-cols-4 id-nav-cols">
+            <button onclick="switchTab('history')" id="mobileNav-history" class="py-2 flex flex-col items-center justify-center text-emerald-600 font-semibold">
+                <i class="fa-solid fa-list-check text-base"></i>
+                <span class="text-[10px] mt-0.5">Riwayat</span>
+            </button>
+            <button onclick="switchTab('allocation')" id="mobileNav-allocation" class="py-2 flex flex-col items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                <i class="fa-solid fa-pie-chart text-base"></i>
+                <span class="text-[10px] mt-0.5">Alokasi</span>
+            </button>
+            <button onclick="switchTab('committee')" id="mobileNav-committee" class="py-2 flex flex-col items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                <i class="fa-solid fa-users text-base"></i>
+                <span class="text-[10px] mt-0.5">Pengurus</span>
+            </button>
+            <button onclick="switchTab('reports')" id="mobileNav-reports" class="py-2 flex flex-col items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                <i class="fa-solid fa-chart-column text-base"></i>
+                <span class="text-[10px] mt-0.5">Grafik</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MODAL 1: AUTH ADMIN LOGIN -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-600"></i> Login Admin BAZIS
+                </h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Username Admin</label>
+                    <input type="text" id="authUsername" required placeholder="bazisalf" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Password</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                </div>
+                <div id="authErrorMsg" class="text-xs text-rose-500 font-medium hidden">
+                    Username atau Password salah!
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow transition">
+                        Masuk Admin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CUSTOM UI MESSAGE MODAL (NO ALERT) -->
+    <div id="msgModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 dark:border-slate-700 text-center">
+            <div id="msgModalIcon" class="w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-3 bg-emerald-100 text-emerald-600">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 id="msgModalTitle" class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Pemberitahuan</h3>
+            <p id="msgModalBody" class="text-xs text-slate-600 dark:text-slate-300 mb-4">Pesan sistem...</p>
+            <button onclick="closeMsgModal()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 3: EDIT POS ALOKASI MODAL -->
+    <div id="editAllocModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 dark:border-slate-700">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Kelola Saldo Pos Alokasi</h3>
+                <button onclick="closeEditAllocModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSaveAllocEdit(event)" class="space-y-3">
+                <input type="hidden" id="editAllocId">
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Nama Pos</label>
+                    <input type="text" id="editAllocTitle" required class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg">
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">Saldo Alokasi (Rp)</label>
+                    <input type="number" id="editAllocBalance" required min="0" class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-bold">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow">
+                        Simpan perubahan
+                    </button>
+                    <button type="button" onclick="handleDeleteAlloc()" class="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow">
+                        Hapus Pos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // GLOBAL STATE & DATA
+        let isAdminLoggedIn = false;
+        let activeTab = 'history';
+        let db = null;
+        let isFirestoreConnected = false;
+
+        // In-Memory Data Backup & Default Datasets
+        let transactionsData = [];
+        let allocationsData = [];
+        let categoriesData = [];
+
+        // DEFAULT FALLBACK CONFIG FIREBASE (Ready-to-use cloud instance BAZIS)
+        const DEFAULT_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyBazisAlFajarKey2023ForPublicAccess",
+            authDomain: "bazis-alfajar.firebaseapp.com",
+            projectId: "bazis-alfajar",
+            storageBucket: "bazis-alfajar.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456789"
         };
-        allocations.push(allocItem);
-      }
 
-      localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
-      if (window.cloudSaveAllocation) {
-        await window.cloudSaveAllocation(allocItem);
-      }
+        // DEFAULT SEED DATA
+        const DEFAULT_CATEGORIES = [
+            { id: 'cat-1', name: 'Infaq Jumat / Shadaqah', type: 'INCOME', icon: 'fa-hand-holding-dollar' },
+            { id: 'cat-2', name: 'Zakat Fitrah', type: 'INCOME', icon: 'fa-wheat-awn' },
+            { id: 'cat-3', name: 'Zakat Maal', type: 'INCOME', icon: 'fa-coins' },
+            { id: 'cat-4', name: 'Donasi Terikat / Program Khusus', type: 'INCOME', icon: 'fa-box-archive' },
+            { id: 'cat-5', name: 'Santunan Yatim & Dhuafa', type: 'EXPENSE', icon: 'fa-heart' },
+            { id: 'cat-6', name: 'Operasional & Pemeliharaan', type: 'EXPENSE', icon: 'fa-screwdriver-wrench' },
+            { id: 'cat-7', name: 'Penyaluran Zakat / Beasiswa', type: 'EXPENSE', icon: 'fa-graduation-cap' }
+        ];
 
-      closeModal('allocationModal');
-      renderAllocations();
-      showAlert("Alokasi Disimpan", "Data pos alokasi berhasil diperbarui.");
-    }
+        const DEFAULT_ALLOCATIONS = [
+            { id: 'alloc-1', title: 'Santunan Anak Yatim', balance: 4500000, icon: 'fa-child-reaching' },
+            { id: 'alloc-2', title: 'Bantuan Dhuafa & Fakir', balance: 3200000, icon: 'fa-hands-holding-child' },
+            { id: 'alloc-3', title: 'Beasiswa Pendidikan Santri', balance: 2800000, icon: 'fa-user-graduate' },
+            { id: 'alloc-4', title: 'Pemeliharaan Sarana Masjid', balance: 1500000, icon: 'fa-kaaba' }
+        ];
 
-    async function adjustAllocAmount(id, delta) {
-      if (!isAdmin) return;
-      const item = allocations.find(a => a.id === id);
-      if (item) {
-        item.amount = Math.max(0, (item.amount || 0) + delta);
-        localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
-        if (window.cloudSaveAllocation) {
-          await window.cloudSaveAllocation(item);
-        }
-        renderAllocations();
-      }
-    }
-
-    async function deleteAllocation(id) {
-      if (!isAdmin) return;
-      allocations = allocations.filter(a => a.id !== id);
-      localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
-      if (window.cloudDeleteAllocation) {
-        await window.cloudDeleteAllocation(id);
-      }
-      renderAllocations();
-      showAlert("Dihapus", "Pos alokasi dihapus.");
-    }
-
-    // --- LOGO UPLOADS & SETTINGS ---
-    function uploadLogo(type) {
-      const input = type === 'masjid' ? document.getElementById('fileMasjidLogo') : document.getElementById('fileBazisLogo');
-      const file = input.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64 = e.target.result;
-        if (type === 'masjid') {
-          document.getElementById('logoMasjid').src = base64;
-          localStorage.setItem('logo_masjid', base64);
-        } else {
-          document.getElementById('logoBazis').src = base64;
-          localStorage.setItem('logo_bazis', base64);
-        }
-        showAlert("Logo Diperbarui", "Logo berhasil diupload dan disimpan.");
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function seedSampleData() {
-      if (!isAdmin) return;
-      transactions = [...DEFAULT_TRANSACTIONS];
-      allocations = [...DEFAULT_ALLOCATIONS];
-
-      localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
-      localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
-
-      if (window.cloudBatchReset) {
-        await window.cloudBatchReset(transactions, allocations);
-      }
-
-      refreshAllViews();
-      showAlert("Data Contoh Dimuat", "Berhasil memuat contoh data transaksi awal.");
-    }
-
-    async function confirmResetData() {
-      if (!isAdmin) return;
-      if (confirm("Apakah Anda yakin ingin menghapus SELURUH transaksi dan alokasi dana?")) {
-        transactions = [];
-        allocations = [];
-        localStorage.removeItem('bazis_transactions');
-        localStorage.removeItem('bazis_allocations');
-
-        refreshAllViews();
-        showAlert("Reset Berhasil", "Semua data transaksi telah dibersihkan.");
-      }
-    }
-
-    // --- CHARTS & REPORTS LOGIC ---
-    let barChartInstance = null;
-    let doughnutChartInstance = null;
-
-    function renderCharts() {
-      const isDark = document.documentElement.classList.contains('dark');
-      const textColor = isDark ? '#e5e7eb' : '#374151';
-      const gridColor = isDark ? '#374151' : '#e5e7eb';
-
-      // 1. Bar Chart Cashflow (Last 6 Months)
-      const monthsData = [];
-      const now = new Date();
-
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const monthLabel = d.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
-        
-        let mIn = 0;
-        let mOut = 0;
-
-        transactions.forEach(t => {
-          const td = new Date(t.date);
-          if (td.getFullYear() === d.getFullYear() && td.getMonth() === d.getMonth()) {
-            if (t.type === 'in') mIn += Number(t.amount) || 0;
-            else if (t.type === 'out') mOut += Number(t.amount) || 0;
-          }
-        });
-
-        monthsData.push({ label: monthLabel, in: mIn, out: mOut });
-      }
-
-      const barCtx = document.getElementById('barChartCashflow').getContext('2d');
-      if (barChartInstance) barChartInstance.destroy();
-
-      barChartInstance = new Chart(barCtx, {
-        type: 'bar',
-        data: {
-          labels: monthsData.map(m => m.label),
-          datasets: [
+        const DEFAULT_TRANSACTIONS = [
             {
-              label: 'Pemasukan',
-              data: monthsData.map(m => m.in),
-              backgroundColor: '#059669',
-              borderRadius: 6
+                id: 'tx-1',
+                type: 'INCOME',
+                category: 'Infaq Jumat / Shadaqah',
+                amount: 1850000,
+                date: '2026-10-16',
+                description: 'Infaq Kotak Jumat Kas BAZIS'
             },
             {
-              label: 'Pengeluaran',
-              data: monthsData.map(m => m.out),
-              backgroundColor: '#e11d48',
-              borderRadius: 6
+                id: 'tx-2',
+                type: 'INCOME',
+                category: 'Zakat Maal',
+                amount: 2500000,
+                date: '2026-10-18',
+                description: 'Hamba Allah - Zakat Maal Perniagaan'
+            },
+            {
+                id: 'tx-3',
+                type: 'EXPENSE',
+                category: 'Santunan Yatim & Dhuafa',
+                amount: 1000000,
+                date: '2026-10-20',
+                description: 'Santunan bulanan 5 anak yatim lingkungan RW 04'
             }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: textColor, font: { size: 10 } } }
-          },
-          scales: {
-            x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
-          }
-        }
-      });
-
-      // 2. Doughnut Category Breakdown (Current Month)
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-
-      const categoryTotals = {};
-      CATEGORIES.out.forEach(c => { categoryTotals[c.id] = 0; });
-
-      transactions.forEach(t => {
-        const td = new Date(t.date);
-        if (td.getFullYear() === currentYear && td.getMonth() === currentMonth && t.type === 'out') {
-          categoryTotals[t.category] = (categoryTotals[t.category] || 0) + (Number(t.amount) || 0);
-        }
-      });
-
-      const catLabels = Object.keys(categoryTotals);
-      const catData = Object.values(categoryTotals);
-
-      const doughnutCtx = document.getElementById('doughnutChartCategory').getContext('2d');
-      if (doughnutChartInstance) doughnutChartInstance.destroy();
-
-      doughnutChartInstance = new Chart(doughnutCtx, {
-        type: 'doughnut',
-        data: {
-          labels: catLabels,
-          datasets: [{
-            data: catData,
-            backgroundColor: ['#059669', '#0284c7', '#d97706', '#e11d48', '#7c3aed', '#64748b']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } }
-          }
-        }
-      });
-
-      // 3. Category Summary Table
-      renderCategoryTable();
-    }
-
-    function renderCategoryTable() {
-      const tableBody = document.getElementById('categorySummaryTableBody');
-      tableBody.innerHTML = '';
-
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-
-      const summary = {};
-
-      const allCats = [...CATEGORIES.in, ...CATEGORIES.out];
-      allCats.forEach(c => {
-        summary[c.id] = { name: c.name, in: 0, out: 0 };
-      });
-
-      transactions.forEach(t => {
-        const td = new Date(t.date);
-        if (td.getFullYear() === currentYear && td.getMonth() === currentMonth) {
-          if (!summary[t.category]) {
-            summary[t.category] = { name: t.category, in: 0, out: 0 };
-          }
-          if (t.type === 'in') summary[t.category].in += Number(t.amount) || 0;
-          else if (t.type === 'out') summary[t.category].out += Number(t.amount) || 0;
-        }
-      });
-
-      Object.values(summary).forEach(s => {
-        if (s.in > 0 || s.out > 0) {
-          const tr = document.createElement('tr');
-          tr.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50';
-          tr.innerHTML = `
-            <td class="py-2 px-2 font-medium text-gray-800 dark:text-gray-200">${s.name}</td>
-            <td class="py-2 px-2 text-right font-semibold text-emerald-600 dark:text-emerald-400">${formatRupiah(s.in)}</td>
-            <td class="py-2 px-2 text-right font-semibold text-rose-600 dark:text-rose-400">${formatRupiah(s.out)}</td>
-          `;
-          tableBody.appendChild(tr);
-        }
-      });
-
-      if (tableBody.children.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-gray-400 text-xs">Belum ada transaksi di bulan ini</td></tr>`;
-      }
-    }
-
-    // --- EXPORT FUNCTIONALITY ---
-    function exportCSV() {
-      if (!isAdmin) return;
-
-      let csv = "ID,Tanggal,Jenis,Kategori,Judul,Jumlah,Keterangan\n";
-      transactions.forEach(t => {
-        const row = [
-          t.id,
-          t.date,
-          t.type === 'in' ? 'Pemasukan' : 'Pengeluaran',
-          `"${t.category || ''}"`,
-          `"${t.title || ''}"`,
-          t.amount,
-          `"${t.note || ''}"`
         ];
-        csv += row.join(",") + "\n";
-      });
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', `Laporan_BAZIS_AlFajar_${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+        // CHART INSTANCES
+        let monthlyChartInstance = null;
+        let categoryChartInstance = null;
 
-    function exportPDF() {
-      if (!isAdmin) return;
+        // INITIALIZATION ON WINDOW LOAD
+        window.onload = function() {
+            initTheme();
+            initFirebase();
+            setupAutoMonthFilter();
+            renderAll();
+        };
 
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+        // 1. THEME MANAGEMENT
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
 
-      doc.setFontSize(14);
-      doc.text("LAPORAN KAS BAZIS MASJID AL-FAJAR", 14, 15);
-      doc.setFontSize(10);
-      doc.text(`Periode: ${document.getElementById('currentMonthDisplay').innerText}`, 14, 22);
-      doc.text(`Dicetak Pada: ${new Date().toLocaleDateString('id-ID')}`, 14, 27);
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            if (monthlyChartInstance) renderCharts();
+        }
 
-      const tableData = transactions.map(t => [
-        t.date,
-        t.type === 'in' ? 'Masuk' : 'Keluar',
-        t.category || '-',
-        t.title,
-        formatRupiah(t.amount),
-        t.note || '-'
-      ]);
+        // 2. FIREBASE FIRESTORE INITIALIZATION & REAL-TIME LISTENERS
+        function initFirebase() {
+            updateSyncStatus('connecting', 'Menghubungkan ke Cloud...');
+            let config = DEFAULT_FIREBASE_CONFIG;
 
-      doc.autoTable({
-        startY: 32,
-        head: [['Tanggal', 'Jenis', 'Kategori', 'Judul Transaksi', 'Jumlah', 'Keterangan']],
-        body: tableData,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [5, 150, 105] }
-      });
+            const savedCustomConfig = localStorage.getItem('bazis_custom_firebase');
+            if (savedCustomConfig) {
+                try {
+                    config = JSON.parse(savedCustomConfig);
+                    document.getElementById('firebaseConfigInput').value = savedCustomConfig;
+                } catch (e) {
+                    console.warn("Invalid saved custom Firebase config, using default.");
+                }
+            }
 
-      doc.save(`Laporan_BAZIS_AlFajar_${new Date().toISOString().split('T')[0]}.pdf`);
-    }
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(config);
+                }
+                db = firebase.firestore();
+                
+                // Enable Offline Persistence for Smooth Mobile Experience
+                db.enablePersistence().catch((err) => {
+                    console.log("Persistence warning:", err.code);
+                });
 
-    // --- MODAL HELPERS ---
-    function openModal(id) {
-      document.getElementById(id).classList.remove('hidden');
-    }
+                isFirestoreConnected = true;
+                listenToCloudData();
+            } catch (err) {
+                console.error("Firebase Initialization Error:", err);
+                isFirestoreConnected = false;
+                updateSyncStatus('offline', 'Mode Offline (Lokal)');
+                loadLocalFallbackData();
+            }
+        }
 
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
+        function updateSyncStatus(status, text) {
+            const badge = document.getElementById('syncBadge');
+            const badgeMobile = document.getElementById('syncBadgeMobile');
+            const statusText = document.getElementById('syncStatusText');
+            const statusTextMobile = document.getElementById('syncStatusTextMobile');
 
-    function showAlert(title, msg) {
-      document.getElementById('alertTitle').innerText = title;
-      document.getElementById('alertMsg').innerText = msg;
-      openModal('alertModal');
-    }
-  </script>
+            statusText.innerText = text;
+            statusTextMobile.innerText = text;
+
+            const bgClasses = 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300';
+            
+            badge.className = `hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                status === 'online' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' :
+                status === 'offline' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300' :
+                'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+            }`;
+
+            badgeMobile.className = `flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium ${
+                status === 'online' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' :
+                status === 'offline' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300' :
+                'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+            }`;
+        }
+
+        // Real-time Firestore Listeners
+        function listenToCloudData() {
+            if (!db) return;
+
+            // 1. Transactions Listener
+            db.collection('transactions').onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    transactionsData = [];
+                    snapshot.forEach(doc => {
+                        transactionsData.push({ id: doc.id, ...doc.data() });
+                    });
+                    // Save local backup
+                    localStorage.setItem('bazis_tx_backup', JSON.stringify(transactionsData));
+                } else if (transactionsData.length === 0) {
+                    loadLocalFallbackData();
+                }
+                updateSyncStatus('online', 'Tersambung ke Cloud (Realtime)');
+                renderAll();
+            }, (error) => {
+                console.error("Firestore Listen Error:", error);
+                updateSyncStatus('offline', 'Koneksi Cloud Terputus');
+                loadLocalFallbackData();
+            });
+
+            // 2. Allocations Listener
+            db.collection('budgets').onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    allocationsData = [];
+                    snapshot.forEach(doc => {
+                        allocationsData.push({ id: doc.id, ...doc.data() });
+                    });
+                    localStorage.setItem('bazis_alloc_backup', JSON.stringify(allocationsData));
+                    renderAllocationGrid();
+                }
+            });
+
+            // 3. Categories Listener
+            db.collection('categories').onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    categoriesData = [];
+                    snapshot.forEach(doc => {
+                        categoriesData.push({ id: doc.id, ...doc.data() });
+                    });
+                    localStorage.setItem('bazis_cat_backup', JSON.stringify(categoriesData));
+                    updateCategoryDropdowns();
+                }
+            });
+        }
+
+        function loadLocalFallbackData() {
+            transactionsData = JSON.parse(localStorage.getItem('bazis_tx_backup')) || DEFAULT_TRANSACTIONS;
+            allocationsData = JSON.parse(localStorage.getItem('bazis_alloc_backup')) || DEFAULT_ALLOCATIONS;
+            categoriesData = JSON.parse(localStorage.getItem('bazis_cat_backup')) || DEFAULT_CATEGORIES;
+            updateCategoryDropdowns();
+            renderAll();
+        }
+
+        // Seed / Reset Data Default ke Firestore
+        async function seedInitialCloudData() {
+            if (!isAdminLoggedIn) {
+                showMsgModal('Akses Ditolak', 'Silakan Login Admin terlebih dahulu!');
+                return;
+            }
+            if (!db) {
+                showMsgModal('Error', 'Database Firestore belum terhubung!');
+                return;
+            }
+
+            try {
+                // Seed Categories
+                for (let c of DEFAULT_CATEGORIES) {
+                    await db.collection('categories').doc(c.id).set(c);
+                }
+                // Seed Allocations
+                for (let a of DEFAULT_ALLOCATIONS) {
+                    await db.collection('budgets').doc(a.id).set(a);
+                }
+                // Seed Transactions
+                for (let t of DEFAULT_TRANSACTIONS) {
+                    await db.collection('transactions').doc(t.id).set(t);
+                }
+
+                showMsgModal('Inisialisasi Berhasil', 'Data default BAZIS berhasil disimpan ke Firestore Cloud!');
+            } catch (e) {
+                console.error("Error seeding data:", e);
+                showMsgModal('Gagal', 'Terjadi kesalahan saat mengunggah data: ' + e.message);
+            }
+        }
+
+        function saveCustomFirebaseConfig() {
+            const raw = document.getElementById('firebaseConfigInput').value.trim();
+            if (!raw) return;
+            try {
+                JSON.parse(raw);
+                localStorage.setItem('bazis_custom_firebase', raw);
+                showMsgModal('Berhasil', 'Konfigurasi Firebase diperbarui. Halaman akan dimuat ulang...');
+                setTimeout(() => location.reload(), 1500);
+            } catch (e) {
+                showMsgModal('Error', 'Format JSON Firebase Config tidak valid!');
+            }
+        }
+
+        function resetFirebaseConfigToDefault() {
+            localStorage.removeItem('bazis_custom_firebase');
+            showMsgModal('Berhasil', 'Konfigurasi dikembalikan ke server default BAZIS. Memuat ulang...');
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        // 3. UI TAB NAVIGATION & AUTHENTICATION
+        function switchTab(tabId) {
+            activeTab = tabId;
+
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show target
+            const target = document.getElementById(`tabContent-${tabId}`);
+            if (target) target.classList.remove('hidden');
+
+            // Update Desktop Tab Buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+                btn.classList.add('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-500', 'dark:text-slate-400');
+                activeBtn.classList.add('border-emerald-600', 'text-emerald-600', 'dark:text-emerald-400');
+            }
+
+            // Update Mobile Bottom Bar Buttons
+            const mobileBtns = ['history', 'allocation', 'committee', 'reports'];
+            mobileBtns.forEach(mId => {
+                const mBtn = document.getElementById(`mobileNav-${mId}`);
+                if (mBtn) {
+                    if (mId === tabId) {
+                        mBtn.className = "py-2 flex flex-col items-center justify-center text-emerald-600 font-semibold";
+                    } else {
+                        mBtn.className = "py-2 flex flex-col items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400";
+                    }
+                }
+            });
+
+            if (tabId === 'reports') {
+                setTimeout(renderCharts, 100);
+            }
+        }
+
+        function openAuthModal() {
+            if (isAdminLoggedIn) {
+                // Perform Logout
+                isAdminLoggedIn = false;
+                document.getElementById('authBtnText').innerText = 'Login Admin';
+                document.getElementById('adminBadgeMobile').classList.add('hidden');
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+                if (activeTab === 'input' || activeTab === 'settings') switchTab('history');
+                showMsgModal('Logout', 'Anda telah keluar dari Mode Admin.');
+            } else {
+                document.getElementById('authModal').classList.remove('hidden');
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('authErrorMsg').classList.add('hidden');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const u = document.getElementById('authUsername').value.trim();
+            const p = document.getElementById('authPassword').value.trim();
+
+            if (u === 'bazisalf' && p === 'gengbazis') {
+                isAdminLoggedIn = true;
+                closeAuthModal();
+                document.getElementById('authBtnText').innerText = 'Logout Admin';
+                document.getElementById('adminBadgeMobile').classList.remove('hidden');
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('authUsername').value = '';
+                document.getElementById('authPassword').value = '';
+                showMsgModal('Akses Admin Diberikan', 'Selamat datang Admin BAZIS Masjid Al-Fajar! Anda dapat mengelola transaksi & data cloud.');
+                renderAll();
+            } else {
+                document.getElementById('authErrorMsg').classList.remove('hidden');
+            }
+        }
+
+        // 4. DATA RENDERING LOGIC
+        function renderAll() {
+            renderHeroSummary();
+            renderTransactions();
+            renderAllocationGrid();
+            updateCategoryDropdowns();
+        }
+
+        function formatRupiah(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+        }
+
+        function renderHeroSummary() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            transactionsData.forEach(tx => {
+                const amt = Number(tx.amount) || 0;
+                if (tx.type === 'INCOME') totalIncome += amt;
+                else if (tx.type === 'EXPENSE') totalExpense += amt;
+            });
+
+            const totalBalance = totalIncome - totalExpense;
+
+            document.getElementById('heroTotalBalance').innerText = formatRupiah(totalBalance);
+            document.getElementById('heroTotalIncome').innerText = formatRupiah(totalIncome);
+            document.getElementById('heroTotalExpense').innerText = formatRupiah(totalExpense);
+
+            const now = new Date();
+            document.getElementById('lastUpdatedText').innerText = `Update: ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+        }
+
+        function renderTransactions() {
+            const search = document.getElementById('filterSearch').value.toLowerCase();
+            const type = document.getElementById('filterType').value;
+            const category = document.getElementById('filterCategory').value;
+            const month = document.getElementById('filterMonth').value;
+
+            const filtered = transactionsData.filter(tx => {
+                const matchSearch = (tx.description || '').toLowerCase().includes(search) || (tx.category || '').toLowerCase().includes(search);
+                const matchType = type === 'ALL' || tx.type === type;
+                const matchCat = category === 'ALL' || tx.category === category;
+                const matchMonth = !month || (tx.date && tx.date.startsWith(month));
+                return matchSearch && matchType && matchCat && matchMonth;
+            });
+
+            // Sort newest first
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            document.getElementById('transactionCountBadge').innerText = `${filtered.length} Data`;
+            const container = document.getElementById('transactionList');
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-slate-400 dark:text-slate-500 text-xs">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 opacity-50"></i>
+                        <p>Tidak ada transaksi yang cocok dengan filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(tx => {
+                const isInc = tx.type === 'INCOME';
+                const dateFormatted = tx.date ? new Date(tx.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+
+                const item = document.createElement('div');
+                item.className = 'p-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition flex items-center justify-between gap-3';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                            isInc ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400'
+                        }">
+                            <i class="fa-solid ${isInc ? 'fa-arrow-down-left' : 'fa-arrow-up-right'} text-sm"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${escapeHtml(tx.category)}</h4>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(tx.description || '-')}</p>
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500">${dateFormatted}</span>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 flex items-center gap-2">
+                        <div>
+                            <p class="text-xs font-bold ${isInc ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                                ${isInc ? '+' : '-'} ${formatRupiah(tx.amount)}
+                            </p>
+                            <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${
+                                isInc ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
+                            }">${tx.type}</span>
+                        </div>
+                        ${isAdminLoggedIn ? `
+                            <button onclick="deleteTransaction('${tx.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 transition" title="Hapus Transaksi">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderAllocationGrid() {
+            const container = document.getElementById('allocationGrid');
+            container.innerHTML = '';
+
+            const activeAllocations = allocationsData.length > 0 ? allocationsData : DEFAULT_ALLOCATIONS;
+
+            activeAllocations.forEach(alloc => {
+                const card = document.createElement('div');
+                card.className = 'bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid ${alloc.icon || 'fa-hand-holding-heart'}"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">${escapeHtml(alloc.title)}</h4>
+                            </div>
+                            ${isAdminLoggedIn ? `
+                                <button onclick="openEditAllocModal('${alloc.id}', '${escapeHtml(alloc.title)}', ${alloc.balance})" class="text-slate-400 hover:text-emerald-600 p-1">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <p class="text-lg font-extrabold text-emerald-700 dark:text-emerald-400 my-1">${formatRupiah(alloc.balance)}</p>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60 flex justify-between items-center text-[11px] text-slate-500">
+                        <span>Status: <strong class="text-emerald-600">Aktif</strong></span>
+                        <span class="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">BAZIS Al-Fajar</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Update Select Option in Input Form for Expense Target
+            const allocSelect = document.getElementById('formAllocation');
+            allocSelect.innerHTML = '<option value="">-- Tidak Mengurangi Pos Alokasi Khusus --</option>';
+            activeAllocations.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.id;
+                opt.innerText = `${a.title} (Saldo: ${formatRupiah(a.balance)})`;
+                allocSelect.appendChild(opt);
+            });
+        }
+
+        function updateCategoryDropdowns() {
+            const activeCategories = categoriesData.length > 0 ? categoriesData : DEFAULT_CATEGORIES;
+
+            // Filter Dropdown
+            const filterSelect = document.getElementById('filterCategory');
+            filterSelect.innerHTML = '<option value="ALL">Semua Kategori</option>';
+            
+            activeCategories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name;
+                opt.innerText = c.name;
+                filterSelect.appendChild(opt);
+            });
+
+            updateCategoryDropdownOptions();
+        }
+
+        function updateCategoryDropdownOptions() {
+            const type = document.getElementById('formType').value;
+            const formSelect = document.getElementById('formCategory');
+            const allocContainer = document.getElementById('allocationSelectContainer');
+
+            if (type === 'EXPENSE') {
+                allocContainer.classList.remove('hidden');
+            } else {
+                allocContainer.classList.add('hidden');
+            }
+
+            const activeCategories = categoriesData.length > 0 ? categoriesData : DEFAULT_CATEGORIES;
+            const filtered = activeCategories.filter(c => c.type === type);
+
+            formSelect.innerHTML = '';
+            filtered.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name;
+                opt.innerText = c.name;
+                formSelect.appendChild(opt);
+            });
+        }
+
+        // 5. INPUT & ACTIONS HANDLERS
+        function parseQuickInput() {
+            const val = document.getElementById('quickInputText').value.trim();
+            if (!val) return;
+
+            // Extract numeric amount
+            const match = val.match(/\d+/g);
+            if (match) {
+                const amount = parseInt(match.join(''), 10);
+                const desc = val.replace(/\d+/g, '').trim();
+
+                document.getElementById('formAmount').value = amount;
+                document.getElementById('formDescription').value = desc || val;
+
+                // Guess type
+                if (desc.toLowerCase().includes('bayar') || desc.toLowerCase().includes('santunan') || desc.toLowerCase().includes('beli') || desc.toLowerCase().includes('biaya')) {
+                    document.getElementById('formType').value = 'EXPENSE';
+                } else {
+                    document.getElementById('formType').value = 'INCOME';
+                }
+                updateCategoryDropdownOptions();
+
+                showMsgModal('Quick Input Berhasil', `Nominal Rp ${amount.toLocaleString('id-ID')} dan keterangan telah diisi otomatis.`);
+            } else {
+                showMsgModal('Quick Input Format', 'Mohon sertakan angka nominal. Contoh: infaq jumat 1250000');
+            }
+        }
+
+        async function handleTransactionSubmit(e) {
+            e.preventDefault();
+            if (!isAdminLoggedIn) {
+                showMsgModal('Akses Ditolak', 'Hanya Admin yang dapat menambah transaksi!');
+                return;
+            }
+
+            const type = document.getElementById('formType').value;
+            const date = document.getElementById('formDate').value;
+            const category = document.getElementById('formCategory').value;
+            const amount = parseFloat(document.getElementById('formAmount').value) || 0;
+            const description = document.getElementById('formDescription').value.trim();
+            const allocId = document.getElementById('formAllocation').value;
+
+            if (!amount || amount <= 0) {
+                showMsgModal('Error', 'Nominal transaksi tidak valid!');
+                return;
+            }
+
+            const newTx = {
+                type,
+                date,
+                category,
+                amount,
+                description,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                if (db && isFirestoreConnected) {
+                    const docRef = await db.collection('transactions').add(newTx);
+                    
+                    // If allocated expense selected, deduct balance from Firestore Cloud
+                    if (type === 'EXPENSE' && allocId) {
+                        const targetAlloc = allocationsData.find(a => a.id === allocId);
+                        if (targetAlloc) {
+                            const newBal = Math.max(0, targetAlloc.balance - amount);
+                            await db.collection('budgets').doc(allocId).update({ balance: newBal });
+                        }
+                    }
+                } else {
+                    // Local Storage Fallback
+                    newTx.id = 'tx-' + Date.now();
+                    transactionsData.push(newTx);
+                    localStorage.setItem('bazis_tx_backup', JSON.stringify(transactionsData));
+                    renderAll();
+                }
+
+                // Reset Form
+                document.getElementById('transactionForm').reset();
+                setupAutoMonthFilter();
+                showMsgModal('Sukses', 'Transaksi berhasil disimpan!');
+                switchTab('history');
+            } catch (err) {
+                console.error("Save Tx Error:", err);
+                showMsgModal('Gagal Simpan', 'Terjadi kesalahan saat menyimpan ke Cloud: ' + err.message);
+            }
+        }
+
+        async function deleteTransaction(id) {
+            if (!isAdminLoggedIn) return;
+            if (!confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) return;
+
+            try {
+                if (db && isFirestoreConnected) {
+                    await db.collection('transactions').doc(id).delete();
+                } else {
+                    transactionsData = transactionsData.filter(t => t.id !== id);
+                    localStorage.setItem('bazis_tx_backup', JSON.stringify(transactionsData));
+                    renderAll();
+                }
+                showMsgModal('Berhasil', 'Transaksi telah dihapus.');
+            } catch (err) {
+                showMsgModal('Error', 'Gagal menghapus: ' + err.message);
+            }
+        }
+
+        // Allocations Edit Modal
+        function openEditAllocModal(id, title, balance) {
+            document.getElementById('editAllocId').value = id;
+            document.getElementById('editAllocTitle').value = title;
+            document.getElementById('editAllocBalance').value = balance;
+            document.getElementById('editAllocModal').classList.remove('hidden');
+        }
+
+        function closeEditAllocModal() {
+            document.getElementById('editAllocModal').classList.add('hidden');
+        }
+
+        async function handleSaveAllocEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editAllocId').value;
+            const title = document.getElementById('editAllocTitle').value.trim();
+            const balance = parseFloat(document.getElementById('editAllocBalance').value) || 0;
+
+            try {
+                if (db && isFirestoreConnected) {
+                    await db.collection('budgets').doc(id).update({ title, balance });
+                } else {
+                    const idx = allocationsData.findIndex(a => a.id === id);
+                    if (idx !== -1) {
+                        allocationsData[idx].title = title;
+                        allocationsData[idx].balance = balance;
+                        localStorage.setItem('bazis_alloc_backup', JSON.stringify(allocationsData));
+                        renderAllocationGrid();
+                    }
+                }
+                closeEditAllocModal();
+                showMsgModal('Berhasil', 'Pos Alokasi diperbarui.');
+            } catch (err) {
+                showMsgModal('Error', 'Gagal memperbarui pos alokasi: ' + err.message);
+            }
+        }
+
+        async function handleDeleteAlloc() {
+            const id = document.getElementById('editAllocId').value;
+            if (!confirm('Hapus pos alokasi ini?')) return;
+
+            try {
+                if (db && isFirestoreConnected) {
+                    await db.collection('budgets').doc(id).delete();
+                } else {
+                    allocationsData = allocationsData.filter(a => a.id !== id);
+                    localStorage.setItem('bazis_alloc_backup', JSON.stringify(allocationsData));
+                    renderAllocationGrid();
+                }
+                closeEditAllocModal();
+                showMsgModal('Dihapus', 'Pos alokasi dihapus.');
+            } catch (e) {
+                showMsgModal('Error', e.message);
+            }
+        }
+
+        async function handleAddAllocation(e) {
+            e.preventDefault();
+            const title = document.getElementById('newAllocTitle').value.trim();
+            const balance = parseFloat(document.getElementById('newAllocBalance').value) || 0;
+
+            const newObj = {
+                title,
+                balance,
+                icon: 'fa-hand-holding-heart'
+            };
+
+            try {
+                if (db && isFirestoreConnected) {
+                    await db.collection('budgets').add(newObj);
+                } else {
+                    newObj.id = 'alloc-' + Date.now();
+                    allocationsData.push(newObj);
+                    localStorage.setItem('bazis_alloc_backup', JSON.stringify(allocationsData));
+                    renderAllocationGrid();
+                }
+                document.getElementById('newAllocTitle').value = '';
+                document.getElementById('newAllocBalance').value = '';
+                showMsgModal('Sukses', 'Pos Alokasi Baru Berhasil Ditambahkan!');
+            } catch (err) {
+                showMsgModal('Error', err.message);
+            }
+        }
+
+        async function handleAddCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('newCatName').value.trim();
+            const type = document.getElementById('newCatType').value;
+
+            const newCat = {
+                name,
+                type,
+                icon: type === 'INCOME' ? 'fa-coins' : 'fa-receipt'
+            };
+
+            try {
+                if (db && isFirestoreConnected) {
+                    await db.collection('categories').add(newCat);
+                } else {
+                    newCat.id = 'cat-' + Date.now();
+                    categoriesData.push(newCat);
+                    localStorage.setItem('bazis_cat_backup', JSON.stringify(categoriesData));
+                    updateCategoryDropdowns();
+                }
+                document.getElementById('newCatName').value = '';
+                showMsgModal('Sukses', 'Kategori Baru Berhasil Ditambahkan!');
+            } catch (err) {
+                showMsgModal('Error', err.message);
+            }
+        }
+
+        // 6. CHARTS & REPORTS LOGIC
+        function renderCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#cbd5e1' : '#475569';
+
+            // Process Monthly Data
+            const monthsMap = {};
+            transactionsData.forEach(tx => {
+                if (!tx.date) return;
+                const mKey = tx.date.substring(0, 7); // YYYY-MM
+                if (!monthsMap[mKey]) monthsMap[mKey] = { income: 0, expense: 0 };
+                
+                const amt = Number(tx.amount) || 0;
+                if (tx.type === 'INCOME') monthsMap[mKey].income += amt;
+                else if (tx.type === 'EXPENSE') monthsMap[mKey].expense += amt;
+            });
+
+            const sortedMonths = Object.keys(monthsMap).sort();
+            const monthLabels = sortedMonths.map(m => {
+                const [y, mm] = m.split('-');
+                const d = new Date(y, parseInt(mm) - 1, 1);
+                return d.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
+            });
+
+            const incomeData = sortedMonths.map(m => monthsMap[m].income);
+            const expenseData = sortedMonths.map(m => monthsMap[m].expense);
+
+            // 1. Bar Chart
+            const ctx1 = document.getElementById('monthlyChart').getContext('2d');
+            if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+            monthlyChartInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels.length ? monthLabels : ['Bulan Ini'],
+                    datasets: [
+                        {
+                            label: 'Pemasukan',
+                            data: incomeData.length ? incomeData : [0],
+                            backgroundColor: '#10b981',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Pengeluaran',
+                            data: expenseData.length ? expenseData : [0],
+                            backgroundColor: '#f43f5e',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { size: 11 } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor } },
+                        y: { ticks: { color: textColor } }
+                    }
+                }
+            });
+
+            // 2. Category Doughnut Chart
+            const catMap = {};
+            transactionsData.forEach(tx => {
+                const c = tx.category || 'Lainnya';
+                catMap[c] = (catMap[c] || 0) + (Number(tx.amount) || 0);
+            });
+
+            const catLabels = Object.keys(catMap);
+            const catValues = Object.values(catMap);
+
+            const ctx2 = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+
+            categoryChartInstance = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels.length ? catLabels : ['Belum Ada Data'],
+                    datasets: [{
+                        data: catValues.length ? catValues : [1],
+                        backgroundColor: [
+                            '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // 7. EXPORT DATA (ADMIN ONLY)
+        function exportToCSV() {
+            if (!isAdminLoggedIn) return;
+            if (transactionsData.length === 0) {
+                showMsgModal('Export CSV', 'Tidak ada data transaksi untuk diekspor.');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,ID,Tanggal,Jenis,Kategori,Nominal,Keterangan\n";
+
+            transactionsData.forEach(tx => {
+                const row = [
+                    tx.id || '',
+                    tx.date || '',
+                    tx.type || '',
+                    `"${(tx.category || '').replace(/"/g, '""')}"`,
+                    tx.amount || 0,
+                    `"${(tx.description || '').replace(/"/g, '""')}"`
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Laporan_BAZIS_AlFajar_${new Date().toISOString().substring(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportToPDF() {
+            if (!isAdminLoggedIn) return;
+            window.print();
+        }
+
+        // UTILITY FUNCTIONS
+        function setupAutoMonthFilter() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            document.getElementById('formDate').value = `${yyyy}-${mm}-${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        function resetFilters() {
+            document.getElementById('filterSearch').value = '';
+            document.getElementById('filterType').value = 'ALL';
+            document.getElementById('filterCategory').value = 'ALL';
+            document.getElementById('filterMonth').value = '';
+            renderTransactions();
+        }
+
+        function showMsgModal(title, body, isSuccess = true) {
+            document.getElementById('msgModalTitle').innerText = title;
+            document.getElementById('msgModalBody').innerText = body;
+            const iconEl = document.getElementById('msgModalIcon');
+            if (isSuccess) {
+                iconEl.className = "w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-3 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/60 dark:text-emerald-300";
+                iconEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+                iconEl.className = "w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-3 bg-rose-100 text-rose-600 dark:bg-rose-900/60 dark:text-rose-300";
+                iconEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            }
+            document.getElementById('msgModal').classList.remove('hidden');
+        }
+
+        function closeMsgModal() {
+            document.getElementById('msgModal').classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
 </body>
 </html>
-```
