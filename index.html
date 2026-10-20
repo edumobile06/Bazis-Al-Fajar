@@ -7,6 +7,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- Firebase SDK Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <style>
 :root{--bg:#F2F6F9;--sf:#FFFFFF;--sf2:#E8EFF5;--tx:#091929;--mt:#5C7082;--ac:#0DCEA0;--acd:#08A27E;--in:#0DB88E;--out:#E5534B;--bd:#D4E1EA;--sh:0 6px 20px rgba(0,0,0,.06)}
 [data-theme=dark]{--bg:#07111E;--sf:#0C1927;--sf2:#122436;--tx:#E6F1F7;--mt:#8299AD;--bd:#1A2E42;--in:#0DCEA0;--out:#FF6B6B;--sh:0 6px 20px rgba(0,0,0,.35)}
@@ -163,7 +168,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
   </div>
 </div>
 
-<!-- TAB INPUT (Disembunyikan di Mode Lihat) -->
+<!-- TAB INPUT -->
 <section class="tab" id="t-input">
   <div class="card">
     <h2>💬 Catat Transaksi Baru</h2>
@@ -175,7 +180,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
     <input id="extraNote" placeholder="cth: Donasi dari Bpk. H. Ahmad / Pekan Ke-3">
     <label>Tanggal Transaksi</label>
     <input type="date" id="inDate">
-    <div class="hint">📌 Pisahkan transaksi dengan koma. Tulis nominal polos (25000) atau singkat (25rb, 1,5jt). Kata kunci seperti <i>infaq, sedekah, zakat, donasi, kotak amal, masuk</i> otomatis terdeteksi sebagai pemasukan.</div>
+    <div class="hint">📌 Pisahkan transaksi dengan koma. Tulis nominal polos (25000) atau singkat (25rb, 1,5jt).</div>
   </div>
 
   <div class="card">
@@ -184,7 +189,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
   </div>
 </section>
 
-<!-- TAB RIWAYAT (Halaman Utama Mode Lihat) -->
+<!-- TAB RIWAYAT -->
 <section class="tab on" id="t-hist">
   <div class="card">
     <input id="q" placeholder="🔎 Cari keterangan atau kategori...">
@@ -210,9 +215,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
 <section class="tab" id="t-alloc">
   <div class="card">
     <h2>🏦 Saldo Alokasi Dana :</h2>
-    <div class="hint" style="margin:-4px 0 10px">
-      Alokasi dana dibagi berdasarkan total saldo yang tersedia.
-    </div>
+    <div class="hint" style="margin:-4px 0 10px">Alokasi dana dibagi berdasarkan total saldo yang tersedia.</div>
     <div id="funds"></div>
     <div class="stat" style="margin-top:12px;background:var(--sf);border-color:var(--ac)">
       Total Alokasi Terdistribusi<b id="fundTot" style="color:var(--ac)">Rp0</b>
@@ -225,11 +228,9 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
   <div class="card">
     <h2>👥 Pengurus Bazis Masjid Al-Fajar</h2>
     <div class="hint" style="margin:-4px 0 14px">Periode Kepengurusan 2023 - 2027</div>
-    
     <div class="team-card"><b>Ketua</b> <span>Eko Mardianto</span></div>
     <div class="team-card"><b>Sekretaris</b> <span>Maulana RH</span></div>
     <div class="team-card"><b>Bendahara</b> <span>M. Fathur Rohman</span></div>
-
     <div class="grp" style="margin-top:20px">Bidang Anggota</div>
     <div class="team-card"><b>1. Nur Cholis</b> <span>Anggota</span></div>
     <div class="team-card"><b>2. Muhalif</b> <span>Anggota</span></div>
@@ -240,13 +241,12 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
   </div>
 </section>
 
-<!-- TAB PENGATURAN (Disembunyikan di Mode Lihat) -->
+<!-- TAB PENGATURAN -->
 <section class="tab" id="t-set">
   <div class="card">
-    <h2>☁️ Status & Simpan Cloud</h2>
-    <div class="hint" style="margin:-4px 0 10px">Data otomatis tersimpan ke Cloud setiap 5 detik setelah ada perubahan. Anda juga bisa menekan tombol di bawah untuk menyimpan manual.</div>
-    <button class="btn w" onclick="manualCloudSave()">💾 Simpan ke Cloud Sekarang</button>
-    <div id="cloudStatus" style="font-size:11px;color:var(--mt);margin-top:8px;text-align:center">Status: Menghubungkan ke Cloud...</div>
+    <h2>☁️ Status Sinkronisasi Cloud</h2>
+    <button class="btn w" onclick="syncToCloud()">💾 Simpan Manual ke Cloud</button>
+    <div id="cloudStatus" style="font-size:12px;color:var(--mt);margin-top:8px;text-align:center;font-weight:700">Status: Menghubungkan ke Cloud...</div>
   </div>
 
   <div class="card">
@@ -260,7 +260,6 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
 
   <div class="card">
     <h2>🖼️ Unggah Logo Header</h2>
-    <div class="hint" style="margin:-4px 0 10px">Pilih file gambar logo (PNG/JPG) langsung dari perangkat Anda.</div>
     <label>Logo 1 (Masjid Al-Fajar)</label>
     <input type="file" id="upLogo1" accept="image/*" onchange="uploadLogo(1,this)">
     <label style="margin-top:10px">Logo 2 (BAZIS)</label>
@@ -306,35 +305,29 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
 <!-- TAB GRAFIK & LAPORAN -->
 <section class="tab" id="t-chart">
   <div class="chips" id="durChips"></div>
-  
   <div class="card">
     <div class="row">
       <div class="stat">Total Masuk<b class="inc" id="cIn">Rp0</b></div>
       <div class="stat">Total Keluar<b class="exp" id="cOut">Rp0</b></div>
       <div class="stat">Sisa Saldo Periode<b id="cNet">Rp0</b></div>
     </div>
-    <!-- Tombol Ekspor CSV & PDF (Hanya muncul jika Admin) -->
     <div class="row" id="exportActionRow" style="margin-top:12px;display:none">
       <button class="btn g" onclick="exportReportCSV()">📥 Ekspor Laporan CSV</button>
       <button class="btn" onclick="exportReportPDF()">📄 Ekspor Laporan PDF</button>
     </div>
   </div>
-
   <div class="card">
     <h2>Grafik Arus Kas Bulanan</h2>
     <canvas id="chBar" height="200"></canvas>
   </div>
-
   <div class="card">
     <h2>Proporsi Pengeluaran per Kategori</h2>
     <canvas id="chPie" height="220"></canvas>
   </div>
-
   <div class="card">
     <h2>Tabel Rincian per Kategori</h2>
     <div class="tw" id="catTable"></div>
   </div>
-
   <div class="card">
     <h2>Rekap Akumulasi Bulanan</h2>
     <div class="tw" id="monTable"></div>
@@ -358,12 +351,28 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;b
 <div class="toast" id="toast"></div>
 
 <script>
+// Initial Firebase Public Storage
+const firebaseConfig = {
+  apiKey: "AIzaSyD-PlaceholderKeyForPublicBaza",
+  authDomain: "bazis-alfajar.firebaseapp.com",
+  projectId: "bazis-alfajar",
+  storageBucket: "bazis-alfajar.appspot.com",
+  messagingSenderId: "102938475612",
+  appId: "1:102938475612:web:abcdef123456"
+};
+
+var db = null;
+try {
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  db = firebase.firestore();
+} catch(e) {
+  console.log("Cloud Database init offline mode");
+}
+
 var K={tx:'giss_transactions',bg:'giss_budgets',cat:'giss_categories',th:'giss_theme',init:'giss_init',auth:'giss_is_admin',l1:'giss_logo1',l2:'giss_logo2'};
 var MON=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-
-// Integrasi Cloud Bin Publik Bersama untuk GitHub Pages
-var CLOUD_BIN_ID = "6644f51beacd3cb47fe142ff"; // ID Slot Public Shared
-var autoSaveTimer = null;
 
 var DEF_CATS=[
  {id:'c1',name:'Infaq Jumat',type:'in',icon:'🕌',kw:'jumat jum\'at'},
@@ -395,82 +404,67 @@ var tx=load(K.tx,null),bg=load(K.bg,null),cats=load(K.cat,null);
 var isAdmin=load(K.auth,false);
 var cur=new Date();cur.setDate(1);
 var dur=6,charts={};
+var cloudTimer = null;
 
 function load(k,d){try{var v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch(e){return d}}
+
 function save(){
   localStorage.setItem(K.tx,JSON.stringify(tx));
   localStorage.setItem(K.bg,JSON.stringify(bg));
   localStorage.setItem(K.cat,JSON.stringify(cats));
   localStorage.setItem(K.auth,JSON.stringify(isAdmin));
   
-  // Jadwalkan auto-save ke cloud setelah 5 detik
-  if(isAdmin){
-    clearTimeout(autoSaveTimer);
-    var statusEl = document.getElementById('cloudStatus');
-    if(statusEl) statusEl.textContent = 'Status: Perubahan terdeteksi, akan tersimpan otomatis dlm 5 detik...';
-    autoSaveTimer = setTimeout(function(){
-      manualCloudSave(true);
-    }, 5000);
-  }
+  // Auto Save ke Cloud dalam 5 Detik secara otomatis
+  clearTimeout(cloudTimer);
+  var st = document.getElementById('cloudStatus');
+  if(st) st.textContent = 'Status: Perubahan tersimpan lokal, mengirim ke Cloud dlm 5d...';
+  cloudTimer = setTimeout(function(){
+    syncToCloud();
+  }, 5000);
 }
 
-// Fungsi Simpan ke Cloud
-function manualCloudSave(isAuto=false){
-  var statusEl = document.getElementById('cloudStatus');
-  if(statusEl) statusEl.textContent = 'Status: Sedang menyimpan ke Cloud...';
+function syncToCloud(){
+  var st = document.getElementById('cloudStatus');
+  if(st) st.textContent = 'Status: Sedang menyimpan ke Cloud... ⏳';
   
-  var payload = {
+  if(!db){
+    if(st) st.textContent = 'Status: Terhubung Lokal (Offline Mode)';
+    return;
+  }
+
+  db.collection('app_data').doc('bazis_main').set({
     transactions: tx,
     budgets: bg,
     categories: cats,
-    updatedAt: new Date().toISOString()
-  };
-
-  fetch('https://api.jsonbin.io/v3/b/6644f51beacd3cb47fe142ff', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Master-Key': '$2a$10$7XbN12Z5Q3Kz5K4xYv7zZ.b5g5H3f8G8y2N1J5L9K0xX6v7u8v9W6'
-    },
-    body: JSON.stringify(payload)
-  })
-  .then(response => {
-    if(statusEl) statusEl.textContent = 'Status: Berhasil tersimpan di Cloud (' + newtoLocaleTime() + ')';
-    if(!isAuto) toast('Data berhasil disimpan ke Cloud!');
-  })
-  .catch(err => {
-    // Fallback jika API publik sedang limit, simpan lokal tetap aman
-    if(statusEl) statusEl.textContent = 'Status: Tersimpan di memori perangkat (Offline mode)';
-    if(!isAuto) toast('Tersimpan di perangkat lokal.');
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    if(st) st.textContent = 'Status: Terkoneksi & Tersimpan di Cloud! ✅ (' + new Date().toLocaleTimeString('id-ID') + ')';
+    toast('Data tersimpan secara otomatis di Cloud!');
+  }).catch(function(err){
+    if(st) st.textContent = 'Status: Tersimpan Lokal (Offline Mode)';
   });
 }
 
-function toLocaleTime(){
-  return new Date().toLocaleTimeString('id-ID');
-}
-
-// Fungsi Ambil Data dari Cloud saat halaman dimuat
-function fetchCloudData(){
-  fetch('https://api.jsonbin.io/v3/b/6644f51beacd3cb47fe142ff/latest', {
-    headers: {
-      'X-Master-Key': '$2a$10$7XbN12Z5Q3Kz5K4xYv7zZ.b5g5H3f8G8y2N1J5L9K0xX6v7u8v9W6'
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data && data.record){
-      if(data.record.transactions) tx = data.record.transactions;
-      if(data.record.budgets) bg = data.record.budgets;
-      if(data.record.categories) cats = data.record.categories;
-      save();
+function listenCloudRealtime(){
+  if(!db) return;
+  db.collection('app_data').doc('bazis_main').onSnapshot(function(doc){
+    if(doc.exists){
+      var data = doc.data();
+      if(data.transactions) tx = data.transactions;
+      if(data.budgets) bg = data.budgets;
+      if(data.categories) cats = data.categories;
+      
+      localStorage.setItem(K.tx,JSON.stringify(tx));
+      localStorage.setItem(K.bg,JSON.stringify(bg));
+      localStorage.setItem(K.cat,JSON.stringify(cats));
+      
       renderAll();
-      var statusEl = document.getElementById('cloudStatus');
-      if(statusEl) statusEl.textContent = 'Status: Terhubung & Sinkron dengan Cloud ✅';
+      var st = document.getElementById('cloudStatus');
+      if(st) st.textContent = 'Status: Realtime Sync Cloud Aktif ✅';
     }
-  })
-  .catch(err => {
-    var statusEl = document.getElementById('cloudStatus');
-    if(statusEl) statusEl.textContent = 'Status: Menggunakan data lokal perangkat.';
+  }, function(err){
+    var st = document.getElementById('cloudStatus');
+    if(st) st.textContent = 'Status: Mode Lokal Perangkat Aktif';
   });
 }
 
@@ -704,7 +698,7 @@ function parseChat(){
   save();
   chatIn.value='';extraNote.value='';
   renderAll();
-  toast(items.length+' transaksi otomatis tersimpan!');
+  toast(items.length+' transaksi tersimpan!');
   chatIn.focus();
 }
 
@@ -803,7 +797,7 @@ function updTx(id){
     date:document.getElementById('eDt').value||t.date,
     category:document.getElementById('eC').value
   });
-  save();closeM();renderAll();toast('Perubahan otomatis disimpan');
+  save();closeM();renderAll();toast('Perubahan disimpan');
 }
 
 function delTx(id){
@@ -1079,7 +1073,7 @@ function renderAll(){
 }
 
 window.addEventListener('DOMContentLoaded', function(){
-  fetchCloudData(); // Ambil data terbaru dari cloud saat dibuka
+  listenCloudRealtime();
 
   var inDateEl = document.getElementById('inDate');
   if(inDateEl) inDateEl.value=ymd(new Date());
