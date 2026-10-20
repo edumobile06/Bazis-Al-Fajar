@@ -1,1082 +1,1591 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>BAZIS MASJID AL-FAJAR · Laporan Pengelolaan Dana</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
-:root{--bg:#F2F6F9;--sf:#FFFFFF;--sf2:#E8EFF5;--tx:#091929;--mt:#5C7082;--ac:#0DCEA0;--acd:#08A27E;--in:#0DB88E;--out:#E5534B;--bd:#D4E1EA;--sh:0 6px 20px rgba(0,0,0,.06)}
-[data-theme=dark]{--bg:#07111E;--sf:#0C1927;--sf2:#122436;--tx:#E6F1F7;--mt:#8299AD;--bd:#1A2E42;--in:#0DCEA0;--out:#FF6B6B;--sh:0 6px 20px rgba(0,0,0,.35)}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding-bottom:88px}
-.wrap{max-width:680px;margin:0 auto;padding:14px}
-
-header{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:var(--sh);text-align:center;position:relative}
-.brand-logos{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
-.brand-logo-box{width:52px;height:52px;border-radius:12px;background:#0A3B2B;display:grid;place-items:center;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.15);border:1px solid rgba(13,206,160,.3)}
-.brand-logo-box img{width:100%;height:100%;object-fit:cover}
-
-.brand-info h1{font-size:18px;font-weight:900;letter-spacing:.3px;color:var(--tx);margin-bottom:2px}
-.brand-info small{display:block;color:var(--ac);font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-
-.h-actions{position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:6px}
-.ib{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:12px;width:36px;height:36px;font-size:15px;cursor:pointer;display:grid;place-items:center}
-.btn-login-badge{background:var(--ac);color:#04221A;border:0;border-radius:12px;padding:0 12px;height:36px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
-.btn-logout-badge{background:var(--out);color:#fff;border:0;border-radius:12px;padding:0 10px;height:36px;font-size:12px;font-weight:800;cursor:pointer}
-
-.card{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
-
-.hero{background:linear-gradient(135deg,#06241D 0%,#0C3832 50%,#095245 100%);color:#fff;border:1px solid rgba(13,206,160,.3);position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(13,206,160,.25),transparent 70%);pointer-events:none}
-.hero .lbl{font-size:12px;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
-.hero .big{font-size:28px;font-weight:900;margin:4px 0 12px;color:#0DCEA0;letter-spacing:-.5px}
-.row{display:flex;gap:10px}.row>*{flex:1}
-.mini{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px;font-size:11px;color:rgba(255,255,255,.8)}.mini b{display:block;font-size:15px;margin-top:2px;color:#fff}
-
-.mnav{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px}
-.mnav b{flex:1;text-align:center;font-size:16px;font-weight:800}
-.mnav button{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:14px;font-weight:700}
-.stat{border-radius:14px;padding:12px;background:var(--sf2);font-size:11px;color:var(--mt);border:1px solid var(--bd)}.stat b{display:block;font-size:16px;margin-top:4px;font-weight:800}
-.inc{color:var(--in)!important}.exp{color:var(--out)!important}
-
-.banner{background:rgba(13,206,160,.12);border:1px dashed var(--ac);border-radius:14px;padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.banner button{margin-left:auto}
-
-.btn{background:var(--ac);color:#04221A;border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px;transition:.2s}
-.btn:active{transform:scale(.98)}
-.btn.g{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}
-.btn.r{background:var(--out);color:#fff}
-.btn.s{padding:6px 10px;font-size:12px;border-radius:8px}
-.btn.w{width:100%}
-.btn:disabled,.read-lock{opacity:.6;cursor:not-allowed!important}
-
-input,select,textarea{width:100%;background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:11px 13px;font-size:14px;font-family:inherit;transition:.2s}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--ac);border-color:transparent;background:var(--sf)}
-label{font-size:12px;color:var(--mt);display:block;margin:10px 0 4px;font-weight:600}
-h2{font-size:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-weight:800}
-
-.chat{display:flex;gap:8px;align-items:flex-end}.chat textarea{border-radius:18px;resize:none;min-height:46px;max-height:120px}
-.chat .btn{border-radius:50%;width:46px;height:46px;flex:none;font-size:18px;padding:0;display:grid;place-items:center}
-.hint{font-size:12px;color:var(--mt);margin-top:8px;line-height:1.5}
-
-.grp{font-size:12px;color:var(--mt);margin:16px 0 6px;display:flex;justify-content:space-between;font-weight:700;text-transform:uppercase}
-.mhead{font-size:15px;font-weight:900;margin:20px 0 6px;color:var(--ac);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd);padding-bottom:4px}
-.tx{display:flex;align-items:center;gap:12px;padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:.15s}
-.tx:hover{border-color:var(--ac)}
-.tx .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--sf2);flex:none;font-size:18px}
-.tx .d{flex:1;min-width:0}.tx .d b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}.tx .d small{color:var(--mt);font-size:11px;display:block;margin-top:2px}
-.tx .a{font-weight:800;font-size:15px;white-space:nowrap}
-.tag{font-size:10px;background:var(--sf2);padding:2px 7px;border-radius:8px;color:var(--mt);margin-left:4px;font-weight:600}
-
-.fund{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--bd);gap:10px}.fund:last-child{border:0}
-.fund b{font-size:18px;display:block;margin-top:2px;font-weight:800}.fund small{color:var(--mt);font-size:12px;font-weight:600}
-.fund .bt{display:flex;gap:6px}
-
-.cat{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px}.cat span{flex:1}
-
-nav{position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--bd);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:5;box-shadow:0 -4px 16px rgba(0,0,0,.04)}
-nav div{display:flex;max-width:680px;width:100%}
-nav button{flex:1;background:none;border:0;color:var(--mt);padding:10px 2px 10px;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600}
-nav button i{font-style:normal;font-size:20px}nav button.on{color:var(--ac);font-weight:800}
-
-.tab{display:none}.tab.on{display:block}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.chip{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);border-radius:20px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:600}.chip.on{background:var(--ac);color:#04221A;border-color:var(--ac);font-weight:800}
-
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 8px;border-bottom:1px solid var(--bd);text-align:right}th:first-child,td:first-child{text-align:left}th{color:var(--mt);font-weight:700}
-.tw{overflow-x:auto}
-
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;z-index:20}
-.modal.on{display:flex}.sheet{background:var(--sf);width:100%;max-width:680px;border-radius:24px 24px 0 0;padding:20px;max-height:88vh;overflow:auto;box-shadow:0 -10px 30px rgba(0,0,0,.2)}
-
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:30;font-weight:700;box-shadow:var(--sh)}
-.toast.on{opacity:1}
-.empty{text-align:center;color:var(--mt);padding:32px 0;font-size:14px}
-
-.rek{font-size:11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 14px;margin-top:12px;display:flex;flex-direction:column;gap:6px;color:rgba(255,255,255,.9);line-height:1.5}
-.rek b{color:#0DCEA0;font-weight:700}
-.rek-info{border-top:1px solid rgba(255,255,255,.12);padding-top:6px;font-size:11px;color:rgba(255,255,255,.85)}
-
-.team-card{background:var(--sf2);border:1px solid var(--bd);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.team-card b{font-size:14px;color:var(--tx)}
-.team-card span{font-size:13px;color:var(--ac);font-weight:700}
-</style>
-</head>
-<body>
-<div class="wrap" id="printableArea">
-
-<header>
-  <div class="brand-logos">
-    <div class="brand-logo-box" title="Logo Masjid Al-Fajar">
-      <img id="logo1Img" src="" alt="Masjid Al-Fajar">
-    </div>
-    <div class="brand-logo-box" title="Logo BAZIS" style="background:#092233;">
-      <img id="logo2Img" src="" alt="BAZIS">
-    </div>
-  </div>
-  <div class="brand-info">
-    <h1>BAZIS MASJID AL-FAJAR</h1>
-    <small>LAPORAN PENGELOLAAN DANA</small>
-  </div>
-  <div class="h-actions">
-    <button class="btn-login-badge" id="loginBtnBadge" onclick="showLoginModal()">🔑 Login</button>
-    <button class="ib" id="themeBtn" title="Ganti Tema">🌓</button>
-  </div>
-</header>
-
-<div id="sampleBanner" class="banner" style="display:none">
-  🧪 <span>Menampilkan data contoh (14 hari).</span>
-  <button class="btn s" onclick="clearSample()">Hapus Data Contoh</button>
-</div>
-
-<div class="card hero">
-  <div class="lbl">Saldo Keseluruhan</div>
-  <div class="big" id="sAll">Rp0</div>
-  <div class="row">
-    <div class="mini">Total Pemasukan<b id="sIn">Rp0</b></div>
-    <div class="mini">Total Pengeluaran<b id="sOut">Rp0</b></div>
-  </div>
-  <div class="rek">
-    <div>Rekening Donasi: <b>BSI 7306872456</b> (a.n. Bazis Masjid Al-Fajar)</div>
-    <div class="rek-info">
-      📱 Layanan Informasi & Konfirmasi Transfer:<br>
-      <b>0821-7715-6145 (Eko Mardianto)</b>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="mnav">
-    <button onclick="mv(-12)" title="Tahun Lalu">«</button>
-    <button onclick="mv(-1)" title="Bulan Lalu">‹</button>
-    <b id="mLabel"></b>
-    <button onclick="mv(1)" title="Bulan Depan">›</button>
-    <button onclick="mv(12)" title="Tahun Depan">»</button>
-  </div>
-  <div class="row">
-    <div class="stat">Pemasukan<b class="inc" id="mIn">Rp0</b></div>
-    <div class="stat">Pengeluaran<b class="exp" id="mOut">Rp0</b></div>
-    <div class="stat">Selisih Bulan<b id="mNet">Rp0</b></div>
-  </div>
-</div>
-
-<!-- TAB INPUT (Disembunyikan di Mode Lihat) -->
-<section class="tab" id="t-input">
-  <div class="card">
-    <h2>💬 Catat Transaksi Baru</h2>
-    <div class="chat">
-      <textarea id="chatIn" rows="1" placeholder="cth: infaq jumat 1250000, beli air galon 25000, listrik 350000"></textarea>
-      <button class="btn" id="btnParse" onclick="parseChat()" title="Proses Transaksi">➤</button>
-    </div>
-    <label>Keterangan / Catatan Tambahan (opsional)</label>
-    <input id="extraNote" placeholder="cth: Donasi dari Bpk. H. Ahmad / Pekan Ke-3">
-    <label>Tanggal Transaksi</label>
-    <input type="date" id="inDate">
-    <div class="hint">📌 Pisahkan transaksi dengan koma. Tulis nominal polos (25000) atau singkat (25rb, 1,5jt). Kata kunci seperti <i>infaq, sedekah, zakat, donasi, kotak amal, masuk</i> otomatis terdeteksi sebagai pemasukan.</div>
-  </div>
-
-  <div class="card">
-    <h2>Transaksi Terakhir</h2>
-    <div id="recent"></div>
-  </div>
-</section>
-
-<!-- TAB RIWAYAT (Halaman Utama Mode Lihat) -->
-<section class="tab on" id="t-hist">
-  <div class="card">
-    <input id="q" placeholder="🔎 Cari keterangan atau kategori...">
-    <div class="row" style="margin-top:8px">
-      <select id="fType">
-        <option value="">Semua Jenis</option>
-        <option value="in">Pemasukan (+)</option>
-        <option value="out">Pengeluaran (-)</option>
-      </select>
-      <select id="fCat"></select>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <select id="fScope">
-        <option value="month">Bulan Terpilih</option>
-        <option value="all">Semua Waktu</option>
-      </select>
-    </div>
-  </div>
-  <div id="histList"></div>
-</section>
-
-<!-- TAB ALOKASI -->
-<section class="tab" id="t-alloc">
-  <div class="card">
-    <h2>🏦 Saldo Alokasi Dana :</h2>
-    <div class="hint" style="margin:-4px 0 10px">
-      Alokasi dana dibagi berdasarkan total saldo yang tersedia.
-    </div>
-    <div id="funds"></div>
-    <div class="stat" style="margin-top:12px;background:var(--sf);border-color:var(--ac)">
-      Total Alokasi Terdistribusi<b id="fundTot" style="color:var(--ac)">Rp0</b>
-    </div>
-  </div>
-</section>
-
-<!-- TAB PENGURUS BAZIS -->
-<section class="tab" id="t-team">
-  <div class="card">
-    <h2>👥 Pengurus Bazis Masjid Al-Fajar</h2>
-    <div class="hint" style="margin:-4px 0 14px">Periode Kepengurusan 2023 - 2027</div>
-    
-    <div class="team-card"><b>Ketua</b> <span>Eko Mardianto</span></div>
-    <div class="team-card"><b>Sekretaris</b> <span>Maulana RH</span></div>
-    <div class="team-card"><b>Bendahara</b> <span>M. Fathur Rohman</span></div>
-
-    <div class="grp" style="margin-top:20px">Bidang Anggota</div>
-    <div class="team-card"><b>1. Nur Cholis</b> <span>Anggota</span></div>
-    <div class="team-card"><b>2. Muhalif</b> <span>Anggota</span></div>
-    <div class="team-card"><b>3. Supriyadi</b> <span>Anggota</span></div>
-    <div class="team-card"><b>4. Ari Nastoro</b> <span>Anggota</span></div>
-    <div class="team-card"><b>5. Muhawan</b> <span>Anggota</span></div>
-    <div class="team-card"><b>6. Sarwo Ardi</b> <span>Anggota</span></div>
-  </div>
-</section>
-
-<!-- TAB PENGATURAN (Disembunyikan di Mode Lihat) -->
-<section class="tab" id="t-set">
-  <div class="card">
-    <h2>🏦 Kelola Pos Alokasi Dana</h2>
-    <div class="row">
-      <input id="newFundName" placeholder="Nama Pos Alokasi Baru">
-      <input id="newFundBal" inputmode="numeric" placeholder="Saldo Awal (Rp)" style="max-width:140px" oninput="const n=num(this.value);this.value=n?n.toLocaleString('id-ID'):''">
-    </div>
-    <button class="btn w" style="margin-top:10px" onclick="addBudgetFund()">+ Tambah Pos Alokasi Baru</button>
-  </div>
-
-  <div class="card">
-    <h2>🖼️ Unggah Logo Header</h2>
-    <div class="hint" style="margin:-4px 0 10px">Pilih file gambar logo (PNG/JPG) langsung dari perangkat Anda.</div>
-    <label>Logo 1 (Masjid Al-Fajar)</label>
-    <input type="file" id="upLogo1" accept="image/*" onchange="uploadLogo(1,this)">
-    <label style="margin-top:10px">Logo 2 (BAZIS)</label>
-    <input type="file" id="upLogo2" accept="image/*" onchange="uploadLogo(2,this)">
-    <button class="btn g w" style="margin-top:10px" onclick="resetLogos()">Reset ke Logo Default</button>
-  </div>
-
-  <div class="card">
-    <h2>🏷️ Kategori Transaksi</h2>
-    <div class="row">
-      <input id="newCat" placeholder="Nama Kategori Baru">
-      <select id="newCatType" style="max-width:130px">
-        <option value="in">Pemasukan</option>
-        <option value="out">Pengeluaran</option>
-      </select>
-    </div>
-    <input id="newCatKw" placeholder="Kata kunci otomatis (pisah spasi)" style="margin-top:8px">
-    <button class="btn w" id="btnAddCat" style="margin-top:10px" onclick="addCat()">+ Tambah Kategori Baru</button>
-    <div id="catList" style="margin-top:12px"></div>
-  </div>
-
-  <div class="card">
-    <h2>📦 Kelola Data & Cadangan JSON</h2>
-    <div class="row">
-      <button class="btn g" onclick="expJSON()">Ekspor JSON</button>
-      <button class="btn g" onclick="document.getElementById('impF').click()">Impor JSON</button>
-    </div>
-    <input type="file" id="impF" accept=".json,application/json" style="display:none">
-    <button class="btn w" id="btnClearSample" style="margin-top:8px" onclick="clearSample()">Hapus Data Contoh</button>
-    <button class="btn r w" id="btnResetAll" style="margin-top:8px" onclick="resetAll()">⚠️ Reset/Hapus Seluruh Data</button>
-  </div>
-
-  <div class="card">
-    <h2>🎨 Pengaturan Tampilan</h2>
-    <select id="themeSel">
-      <option value="auto">Otomatis (Ikuti Sistem Perangkat)</option>
-      <option value="dark">Mode Gelap (Dark Mode)</option>
-      <option value="light">Mode Terang (Light Mode)</option>
-    </select>
-  </div>
-</section>
-
-<!-- TAB GRAFIK & LAPORAN -->
-<section class="tab" id="t-chart">
-  <div class="chips" id="durChips"></div>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAZIS MASJID AL-FAJAR - Laporan Pengelolaan Dana</title>
   
-  <div class="card">
-    <div class="row">
-      <div class="stat">Total Masuk<b class="inc" id="cIn">Rp0</b></div>
-      <div class="stat">Total Keluar<b class="exp" id="cOut">Rp0</b></div>
-      <div class="stat">Sisa Saldo Periode<b id="cNet">Rp0</b></div>
-    </div>
-    <!-- Tombol Ekspor CSV & PDF (Hanya muncul jika Admin) -->
-    <div class="row" id="exportActionRow" style="margin-top:12px;display:none">
-      <button class="btn g" onclick="exportReportCSV()">📥 Ekspor Laporan CSV</button>
-      <button class="btn" onclick="exportReportPDF()">📄 Ekspor Laporan PDF</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Grafik Arus Kas Bulanan</h2>
-    <canvas id="chBar" height="200"></canvas>
-  </div>
-
-  <div class="card">
-    <h2>Proporsi Pengeluaran per Kategori</h2>
-    <canvas id="chPie" height="220"></canvas>
-  </div>
-
-  <div class="card">
-    <h2>Tabel Rincian per Kategori</h2>
-    <div class="tw" id="catTable"></div>
-  </div>
-
-  <div class="card">
-    <h2>Rekap Akumulasi Bulanan</h2>
-    <div class="tw" id="monTable"></div>
-  </div>
-</section>
-
-</div>
-
-<nav>
-  <div id="navTabsContainer">
-    <button data-t="input" id="navInputBtn" style="display:none"><i>✍️</i>Input</button>
-    <button class="on" data-t="hist"><i>📜</i>Riwayat</button>
-    <button data-t="alloc"><i>🏦</i>Alokasi</button>
-    <button data-t="team"><i>👥</i>Pengurus</button>
-    <button data-t="set" id="navSetBtn" style="display:none"><i>⚙️</i>Pengaturan</button>
-    <button data-t="chart"><i>📊</i>Grafik</button>
-  </div>
-</nav>
-
-<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
-<div class="toast" id="toast"></div>
-
-<script>
-var K={tx:'giss_transactions',bg:'giss_budgets',cat:'giss_categories',th:'giss_theme',init:'giss_init',auth:'giss_is_admin',l1:'giss_logo1',l2:'giss_logo2'};
-var MON=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-
-var DEF_CATS=[
- {id:'c1',name:'Infaq Jumat',type:'in',icon:'🕌',kw:'jumat jum\'at'},
- {id:'c2',name:'Kotak Amal',type:'in',icon:'📦',kw:'kotak amal kencleng'},
- {id:'c3',name:'Zakat',type:'in',icon:'🌾',kw:'zakat fitrah mal'},
- {id:'c4',name:'Sedekah/Donasi',type:'in',icon:'🤲',kw:'sedekah donasi infaq infak hamba allah wakaf masuk terima'},
- {id:'c5',name:'Listrik & Air',type:'out',icon:'💡',kw:'listrik pln air pdam token'},
- {id:'c6',name:'Kebersihan',type:'out',icon:'🧹',kw:'sabun pel sapu kebersihan karbol galon pewangi'},
- {id:'c7',name:'Honor/Insentif',type:'out',icon:'👳',kw:'honor insentif marbot imam khatib ustadz penceramah'},
- {id:'c8',name:'Kegiatan',type:'out',icon:'📖',kw:'kajian pengajian tpa tpq konsumsi snack acara santunan'},
- {id:'c9',name:'Perawatan',type:'out',icon:'🔧',kw:'servis perbaikan cat renovasi ganti lampu ac sound'},
- {id:'c10',name:'Ambulance',type:'out',icon:'🚑',kw:'ambulance ambulans bensin bbm solar'},
- {id:'c11',name:'Lain-lain Masuk',type:'in',icon:'➕',kw:''},
- {id:'c12',name:'Lain-lain Keluar',type:'out',icon:'➖',kw:''}
-];
-
-var DEF_BG=[
- {id:'b1',name:'Saldo GISS',bal:2500000},
- {id:'b2',name:'Pengelolaan Ambulance',bal:1750000},
- {id:'b3',name:'Rukun Kematian',bal:1200000}
-];
-
-var DEF_LOGO1="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 8C30 25 20 40 20 60C35 55 45 65 50 72C55 65 65 55 80 60C80 40 70 25 50 8Z' fill='%23137A44'/><path d='M50 18C35 32 26 45 26 62C38 57 45 65 50 71C55 65 62 57 74 62C74 45 65 32 50 18Z' fill='%23229E4C'/><path d='M50 30C40 40 34 49 34 62C42 59 47 65 50 69C53 65 58 59 66 62C66 49 60 40 50 30Z' fill='%2374B822'/><path d='M16 64C32 60 43 77 50 84C57 77 68 60 84 64C72 82 28 82 16 64Z' fill='%235A8E19'/><rect x='42' y='50' width='16' height='13' rx='2' fill='%23FFFFFF'/><path d='M39 52L50 45L61 52L50 58Z' fill='%23137A44'/></svg>";
-var DEF_LOGO2="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%232B5B84' stroke-width='5'/><path d='M 26 52 A 24 24 0 0 0 74 52' fill='none' stroke='%2374B822' stroke-width='6' stroke-linecap='round'/><circle cx='45' cy='42' r='14' fill='%23229E4C'/><path d='M37 44 C37 40 53 40 53 44 C53 50 37 50 37 52 L53 52' fill='none' stroke='%23FFFFFF' stroke-width='3'/><path d='M28 36 C33 28 43 26 48 28 C53 26 63 28 68 36 C63 34 53 38 48 34 C43 38 33 34 28 36 Z' fill='%23E5A93C'/><path d='M30 62 C38 69 58 69 66 62 C58 65 38 65 30 62 Z' fill='%23E5A93C'/></svg>";
-
-var IN_KW=['infaq','infak','sedekah','zakat','donasi','kotak amal','kencleng','masuk','terima','hamba allah','wakaf','jumat','hibah'];
-
-var tx=load(K.tx,null),bg=load(K.bg,null),cats=load(K.cat,null);
-var isAdmin=load(K.auth,false);
-var cur=new Date();cur.setDate(1);
-var dur=6,charts={};
-
-function load(k,d){try{var v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch(e){return d}}
-function save(){
-  localStorage.setItem(K.tx,JSON.stringify(tx));
-  localStorage.setItem(K.bg,JSON.stringify(bg));
-  localStorage.setItem(K.cat,JSON.stringify(cats));
-  localStorage.setItem(K.auth,JSON.stringify(isAdmin));
-}
-
-function loadLogos(){
-  var l1=document.getElementById('logo1Img');
-  var l2=document.getElementById('logo2Img');
-  if(l1) l1.src=localStorage.getItem(K.l1)||DEF_LOGO1;
-  if(l2) l2.src=localStorage.getItem(K.l2)||DEF_LOGO2;
-}
-
-function uploadLogo(num, input){
-  if(!isAdmin)return showLoginModal();
-  var file=input.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    localStorage.setItem(num===1?K.l1:K.l2, e.target.result);
-    loadLogos();
-    toast('Logo '+num+' berhasil diperbarui!');
-  };
-  reader.readAsDataURL(file);
-}
-
-function resetLogos(){
-  if(!isAdmin)return showLoginModal();
-  if(!confirm('Kembalikan logo ke default?'))return;
-  localStorage.removeItem(K.l1);localStorage.removeItem(K.l2);
-  loadLogos();toast('Logo dikembalikan ke default');
-}
-
-var rp=function(n){return (n<0?'-':'')+'Rp'+Math.abs(Math.round(n)).toLocaleString('id-ID')};
-var uid=function(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)};
-var ymd=function(d){var z=function(n){return String(n).padStart(2,'0')};return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())};
-var ym=function(s){return s.slice(0,7)};
-var esc=function(s){return String(s||'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])})};
-var catOf=function(id){return cats.find(function(c){return c.id===id})||{name:'Tanpa Kategori',icon:'•',type:'out'}};
-
-function toast(m){
-  var t=document.getElementById('toast');
-  if(!t)return;
-  t.textContent=m;t.classList.add('on');
-  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('on')},2000);
-}
-
-var fmtDate=function(s){
-  var d=new Date(s+'T00:00');
-  return d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-};
-
-function makeSample(){
-  var out=[],t=new Date();
-  var pick=function(a){return a[Math.floor(Math.random()*a.length)]};
-  for(var i=13;i>=0;i--){
-    var d=new Date(t);d.setDate(t.getDate()-i);var ds=ymd(d),dow=d.getDay();
-    if(dow===5)out.push({desc:'Infaq Jumat Jamaah',note:'Jamaah Masjid Al-Fajar',amount:pick([1250000,1475000,1680000,1320000]),type:'in',category:'c1',date:ds});
-    out.push({desc:'Kotak amal harian masjid',note:'Kotak amal utama',amount:pick([85000,120000,150000,97000,210000]),type:'in',category:'c2',date:ds});
-    if(i%3===0)out.push({desc:'Donasi hamba Allah',note:'Hamba Allah via transfer',amount:pick([100000,250000,500000,300000]),type:'in',category:'c4',date:ds});
-    if(i===12)out.push({desc:'Token listrik masjid',note:'Pembelian token 350rb',amount:350000,type:'out',category:'c5',date:ds});
-    if(i===10)out.push({desc:'Bayar air PDAM',note:'Tagihan bulan ini',amount:185000,type:'out',category:'c5',date:ds});
-    if(i%4===1)out.push({desc:'Beli air galon',note:'Keperluan sekretariat',amount:pick([25000,45000,60000]),type:'out',category:'c6',date:ds});
-    if(dow===5)out.push({desc:'Honor khatib & imam jumat',note:'Ustadz pengisi jumat',amount:300000,type:'out',category:'c7',date:ds});
-    if(i===7)out.push({desc:'Konsumsi snack kajian Ahad',note:'Kajian rutin',amount:275000,type:'out',category:'c8',date:ds});
-    if(i===5)out.push({desc:'Servis & perbaikan sound system',note:'Perbaikan amplifier',amount:450000,type:'out',category:'c9',date:ds});
-    if(i===3)out.push({desc:'BBM operasional ambulance',note:'Pengisian solar',amount:200000,type:'out',category:'c10',date:ds});
-    if(i===1)out.push({desc:'Insentif marbot masjid',note:'Bulanan marbot',amount:750000,type:'out',category:'c7',date:ds});
-  }
-  return out.map(function(o){return Object.assign({id:uid(),isSample:true},o)});
-}
-
-if(!cats)cats=DEF_CATS;
-if(!bg)bg=DEF_BG;
-if(!tx){tx=localStorage.getItem(K.init)?[]:makeSample();localStorage.setItem(K.init,'1')}
-save();
-
-var mq=matchMedia('(prefers-color-scheme: dark)');
-function applyTheme(){
-  var s=localStorage.getItem(K.th)||'auto';
-  document.documentElement.dataset.theme=s==='auto'?(mq.matches?'dark':'light'):s;
-  var sel=document.getElementById('themeSel');
-  if(sel) sel.value=s;
-  if(document.getElementById('t-chart').classList.contains('on'))renderCharts();
-}
-mq.addEventListener('change',applyTheme);
-
-function bindThemeBtn(){
-  var tb=document.getElementById('themeBtn');
-  if(tb){
-    tb.onclick=function(){
-      var now=document.documentElement.dataset.theme;
-      localStorage.setItem(K.th,now==='dark'?'light':'dark');
-      applyTheme();
-    };
-  }
-}
-
-function updateAdminUI(){
-  var hActions=document.querySelector('.h-actions');
-  var setBtn=document.getElementById('navSetBtn');
-  var inputBtn=document.getElementById('navInputBtn');
-  var exportRow=document.getElementById('exportActionRow');
-  
-  if(isAdmin){
-    hActions.innerHTML='<button class="btn-logout-badge" onclick="logoutAdmin()" title="Keluar Admin">🚪 Keluar</button><button class="ib" id="themeBtn" title="Ganti Tema">🌓</button>';
-    if(setBtn) setBtn.style.display='flex';
-    if(inputBtn) inputBtn.style.display='flex';
-    if(exportRow) exportRow.style.display='flex';
-  }else{
-    hActions.innerHTML='<button class="btn-login-badge" onclick="showLoginModal()">🔑 Login</button><button class="ib" id="themeBtn" title="Ganti Tema">🌓</button>';
-    if(setBtn) setBtn.style.display='none';
-    if(inputBtn) inputBtn.style.display='none';
-    if(exportRow) exportRow.style.display='none';
-    
-    if(document.getElementById('t-set').classList.contains('on') || document.getElementById('t-input').classList.contains('on')){
-      var histBtn=document.querySelector('nav button[data-t="hist"]');
-      if(histBtn) histBtn.click();
-    }
-  }
-  
-  bindThemeBtn();
-  
-  var bImp=document.getElementById('btnImpJSON');
-  var bClr=document.getElementById('btnClearSample');
-  var bRst=document.getElementById('btnResetAll');
-  if(bImp) bImp.disabled=!isAdmin;
-  if(bClr) bClr.disabled=!isAdmin;
-  if(bRst) bRst.disabled=!isAdmin;
-  
-  var chatIn=document.getElementById('chatIn');
-  if(chatIn && isAdmin){
-    chatIn.placeholder="cth: infaq jumat 1250000, beli air galon 25000, listrik 350000";
-  }
-  renderFunds();renderCats();renderHist();
-}
-
-function logoutAdmin(){
-  if(confirm('Keluar dari mode admin pengurus?')){
-    isAdmin=false;save();updateAdminUI();toast('Berhasil keluar mode admin');
-  }
-}
-
-function showLoginModal(){
-  openM('<h2>🔑 Login Admin Pengurus</h2><div class="hint" style="margin-bottom:12px">Masukkan User & Password pengurus BAZIS Masjid Al Fajar untuk mengedit data.</div><label>Username</label><input id="lUser" placeholder="Username" style="margin-bottom:8px"><label>Password</label><input type="password" id="lPass" placeholder="Password"><div class="row" style="margin-top:16px"><button class="btn g" onclick="closeM()">Batal</button><button class="btn" onclick="doLogin()">Login</button></div>');
-  setTimeout(function(){
-    var u=document.getElementById('lUser');
-    if(u) u.focus();
-  },100);
-}
-
-function doLogin(){
-  var u=document.getElementById('lUser').value.trim();
-  var p=document.getElementById('lPass').value.trim();
-  if(u==='bazisalf'&&p==='gengbazis'){
-    isAdmin=true;save();closeM();updateAdminUI();toast('Berhasil masuk sebagai Admin!');
-  }else{
-    toast('Username atau Password salah!');
-  }
-}
-
-function sum(list,type){return list.filter(function(t){return t.type===type}).reduce(function(a,t){return a+ +t.amount},0)}
-var curYM=function(){return cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0')};
-
-function renderSummary(){
-  var i=sum(tx,'in'),o=sum(tx,'out');
-  document.getElementById('sIn').textContent=rp(i);
-  document.getElementById('sOut').textContent=rp(o);
-  document.getElementById('sAll').textContent=rp(i-o);
-  
-  var m=tx.filter(function(t){return ym(t.date)===curYM()}),mi=sum(m,'in'),mo=sum(m,'out');
-  document.getElementById('mLabel').textContent=MON[cur.getMonth()]+' '+cur.getFullYear();
-  document.getElementById('mIn').textContent=rp(mi);
-  document.getElementById('mOut').textContent=rp(mo);
-  var mNet=document.getElementById('mNet');
-  mNet.textContent=rp(mi-mo);
-  mNet.className=mi-mo<0?'exp':'inc';
-  
-  var sb=document.getElementById('sampleBanner');
-  if(sb) sb.style.display=tx.some(function(t){return t.isSample})?'flex':'none';
-}
-
-function mv(n){cur.setMonth(cur.getMonth()+n);renderAll()}
-
-function parseAmt(s){
-  var m=s.match(/(\d+(?:[.,]\d+)*)\s*(jt|juta|rb|ribu|k)?\b/i);if(!m)return null;
-  var raw=m[1],u=(m[2]||'').toLowerCase(),n;
-  if(u){n=parseFloat(raw.replace(/\./g,'').replace(',','.'));n*=u.startsWith('j')?1e6:1e3}
-  else n=parseInt(raw.replace(/[.,]/g,''),10);
-  return {n:n,txt:m[0]};
-}
-
-function detect(desc){
-  var l=desc.toLowerCase();
-  var best=null;
-  for(var i=0;i<cats.length;i++){
-    var c=cats[i];
-    var kws=(c.kw||'').split(/\s+/);
-    for(var j=0;j<kws.length;j++){
-      var k=kws[j];
-      if(k&&l.includes(k.toLowerCase())&&(!best||k.length>best.k.length))best={c:c,k:k}
-    }
-  }
-  var type=best?best.c.type:(IN_KW.some(function(k){return l.includes(k)})?'in':'out');
-  if(/\b(masuk|terima)\b/.test(l))type='in';
-  if(/\b(keluar|bayar|beli)\b/.test(l)&&!/\binfaq|zakat\b/.test(l))type=best&&best.c.type==='in'?'out':type==='in'&&!best?'out':type;
-  var cat=best&&best.c.type===type?best.c:cats.find(function(c){return c.type===type&&/lain/i.test(c.name)})||cats.find(function(c){return c.type===type});
-  return {type:type,category:cat?cat.id:''};
-}
-
-function parseChat(){
-  if(!isAdmin)return showLoginModal();
-  var chatIn=document.getElementById('chatIn');
-  var extraNote=document.getElementById('extraNote');
-  var inDate=document.getElementById('inDate');
-  
-  var v=chatIn.value.trim();if(!v)return toast('Ketik transaksi terlebih dahulu');
-  var parts=v.split(/,(?!\d)/).map(function(s){return s.trim()}).filter(Boolean);
-  var note=extraNote.value.trim(),date=inDate.value||ymd(new Date());
-  var items=[];
-  
-  for(var i=0;i<parts.length;i++){
-    var p=parts[i];
-    var a=parseAmt(p);if(!a||!a.n)continue;
-    var desc=p.replace(a.txt,'').replace(/\s+/g,' ').replace(/\b(rp\.?)\b/i,'').trim()||'Transaksi';
-    desc=desc.charAt(0).toUpperCase()+desc.slice(1);
-    var d=detect(p);
-    items.push(Object.assign({id:uid(),date:date,desc:desc,note:note,amount:a.n,isSample:false},d));
-  }
-  if(!items.length)return toast('Tidak ada nominal terdeteksi');
-  
-  tx=tx.concat(items);
-  save();
-  chatIn.value='';extraNote.value='';
-  renderAll();
-  toast(items.length+' transaksi otomatis tersimpan!');
-  chatIn.focus();
-}
-
-function catOpts(type,sel){
-  return cats.filter(function(c){return c.type===type}).map(function(c){return '<option value="'+c.id+'" '+(c.id===sel?'selected':'')+'>'+(c.icon||'')+' '+esc(c.name)+'</option>'}).join('');
-}
-
-var num=function(s){return parseInt(String(s).replace(/[^\d]/g,''),10)||0};
-function fmtIn(el){var n=num(el.value);el.value=n?n.toLocaleString('id-ID'):''}
-
-function row(t){
-  var c=catOf(t.category);
-  var noteHtml = t.note ? '<small style="color:var(--mt);font-size:11px;margin-top:2px;">💬 ' + esc(t.note) + '</small>' : '';
-  return '<div class="tx" onclick="clickTx(\''+t.id+'\')"><div class="ic">'+(c.icon||'•')+'</div><div class="d"><b>'+esc(t.desc)+'</b><small>'+esc(c.name)+(t.isSample?'<span class="tag">contoh</span>':'')+'</small>'+noteHtml+'</div><div class="a '+(t.type==='in'?'inc':'exp')+'">'+(t.type==='in'?'+':'-')+rp(t.amount)+'</div></div>';
-}
-
-function clickTx(id){
-  if(isAdmin) editTx(id);
-  else toast('Akses edit dikunci. Login pengurus untuk mengubah data.');
-}
-
-var sorted=function(l){return l.slice().sort(function(a,b){return b.date.localeCompare(a.date)||b.id.localeCompare(a.id)})};
-
-function renderRecent(){
-  var rec=document.getElementById('recent');
-  if(!rec)return;
-  var l=sorted(tx).slice(0,6);
-  rec.innerHTML=l.length?l.map(row).join(''):'<div class="empty">Belum ada transaksi</div>';
-}
-
-function renderHist(){
-  var histList=document.getElementById('histList');
-  if(!histList)return;
-  var q=document.getElementById('q').value.toLowerCase();
-  var ft=document.getElementById('fType').value;
-  var fc=document.getElementById('fCat').value;
-  var sc=document.getElementById('fScope').value;
-  
-  var l=tx.filter(function(t){return (!ft||t.type===ft)&&(!fc||t.category===fc)&&(sc==='all'||ym(t.date)===curYM())&&(!q||(t.desc+' '+(t.note||'')+' '+catOf(t.category).name).toLowerCase().includes(q))});
-  l=sorted(l);
-  if(!l.length){histList.innerHTML='<div class="empty">Tidak ada transaksi'+(sc==='month'?' di '+MON[cur.getMonth()]+' '+cur.getFullYear():'')+'</div>';return}
-  var h='',lm='',ld='';
-  var months={};l.forEach(function(t){var k=ym(t.date);months[k]=months[k]||{i:0,o:0};months[k][t.type==='in'?'i':'o']+=+t.amount});
-  var days={};l.forEach(function(t){days[t.date]=(days[t.date]||0)+(t.type==='in'?1:-1)*t.amount});
-  
-  for(var i=0;i<l.length;i++){
-    var t=l[i];
-    var m=ym(t.date);
-    if(m!==lm){
-      lm=m;var pts=m.split('-'),y=pts[0],mo=pts[1];
-      h+='<div class="mhead"><span>'+MON[mo-1]+' '+y+'</span><span style="font-size:12px"><span class="inc">+'+rp(months[m].i)+'</span> · <span class="exp">-'+rp(months[m].o)+'</span></span></div>';
-    }
-    if(t.date!==ld){
-      ld=t.date;
-      h+='<div class="grp"><span>'+fmtDate(t.date)+'</span><span>'+rp(days[t.date])+'</span></div>';
-    }
-    h+=row(t);
-  }
-  histList.innerHTML=h;
-}
-
-function fillCatFilter(){
-  var fCat=document.getElementById('fCat');
-  if(!fCat)return;
-  var v=fCat.value;
-  fCat.innerHTML='<option value="">Semua Kategori</option>'+cats.map(function(c){return '<option value="'+c.id+'">'+(c.icon||'')+' '+esc(c.name)+'</option>'}).join('');
-  fCat.value=v;
-}
-
-function openM(h){
-  var sheet=document.getElementById('sheet');
-  var modal=document.getElementById('modal');
-  sheet.innerHTML=h;modal.classList.add('on');
-}
-function closeM(){
-  document.getElementById('modal').classList.remove('on');
-}
-document.getElementById('modal').onclick=function(e){
-  if(e.target===document.getElementById('modal'))closeM();
-};
-
-function editTx(id){
-  if(!isAdmin)return showLoginModal();
-  var t=tx.find(function(x){return x.id===id});if(!t)return;
-  openM('<h2>Edit Transaksi</h2><label>Keterangan / Nama Transaksi</label><input id="eD" value="'+esc(t.desc)+'"><label>Catatan Tambahan</label><input id="eN" value="'+esc(t.note||'')+'"><label>Nominal (Rp)</label><input id="eA" inputmode="numeric" value="'+(+t.amount).toLocaleString('id-ID')+'" oninput="fmtIn(this)"><div class="row"><div><label>Jenis</label><select id="eT" onchange="eC.innerHTML=catOpts(this.value)"><option value="in" '+(t.type==='in'?'selected':'')+'>Pemasukan</option><option value="out" '+(t.type==='out'?'selected':'')+'>Pengeluaran</option></select></div><div><label>Tanggal</label><input type="date" id="eDt" value="'+t.date+'"></div></div><label>Kategori</label><select id="eC">'+catOpts(t.type,t.category)+'</select><div class="row" style="margin-top:16px"><button class="btn r" onclick="delTx(\''+id+'\')">Hapus</button><button class="btn g" onclick="closeM()">Batal</button><button class="btn" onclick="updTx(\''+id+'\')">Simpan</button></div>');
-}
-
-function updTx(id){
-  var t=tx.find(function(x){return x.id===id}),a=num(document.getElementById('eA').value);
-  if(!a)return toast('Nominal tidak valid');
-  Object.assign(t,{
-    desc:document.getElementById('eD').value.trim()||'Transaksi',
-    note:document.getElementById('eN').value.trim(),
-    amount:a,
-    type:document.getElementById('eT').value,
-    date:document.getElementById('eDt').value||t.date,
-    category:document.getElementById('eC').value
-  });
-  save();closeM();renderAll();toast('Perubahan otomatis disimpan');
-}
-
-function delTx(id){
-  if(!confirm('Yakin ingin menghapus transaksi ini?'))return;
-  tx=tx.filter(function(x){return x.id!==id});
-  save();closeM();renderAll();toast('Transaksi dihapus');
-}
-
-function renderFunds(){
-  var funds=document.getElementById('funds');
-  if(!funds)return;
-  funds.innerHTML=bg.map(function(b,i){return '<div class="fund"><div><small>'+(i+1)+'. '+esc(b.name)+'</small><b class="'+(b.bal<0?'exp':'')+'">'+rp(b.bal)+'</b></div><div class="bt"><button class="btn s '+(!isAdmin?'read-lock':'')+'" onclick="fundOp(\''+b.id+'\',\'add\')">+</button><button class="btn s g '+(!isAdmin?'read-lock':'')+'" onclick="fundOp(\''+b.id+'\',\'sub\')">−</button><button class="btn s g '+(!isAdmin?'read-lock':'')+'" onclick="fundOp(\''+b.id+'\',\'set\')">✎</button>'+(isAdmin?'<button class="btn s r" onclick="delFund(\''+b.id+'\')">×</button>':'')+'</div></div>'}).join('');
-  document.getElementById('fundTot').textContent=rp(bg.reduce(function(a,b){return a+b.bal},0));
-}
-
-function addBudgetFund(){
-  if(!isAdmin)return showLoginModal();
-  var nameInput=document.getElementById('newFundName');
-  var balInput=document.getElementById('newFundBal');
-  var name=nameInput.value.trim();
-  var bal=num(balInput.value);
-  if(!name)return toast('Isi nama pos alokasi');
-  bg.push({id:uid(),name:name,bal:bal});
-  nameInput.value='';balInput.value='';
-  save();renderFunds();toast('Pos alokasi baru ditambahkan');
-}
-
-function delFund(id){
-  if(!isAdmin)return showLoginModal();
-  if(bg.length<=1)return toast('Minimal harus ada 1 pos alokasi');
-  if(!confirm('Hapus pos alokasi ini?'))return;
-  bg=bg.filter(function(b){return b.id!==id});
-  save();renderFunds();toast('Pos alokasi dihapus');
-}
-
-function fundOp(id,op){
-  if(!isAdmin)return showLoginModal();
-  var b=bg.find(function(x){return x.id===id}),T={add:'Tambah Saldo Alokasi',sub:'Kurangi Saldo Alokasi',set:'Edit Pos Alokasi'}[op];
-  openM('<h2>'+T+' — '+esc(b.name)+'</h2><div class="hint">Saldo saat ini: <b>'+rp(b.bal)+'</b></div>'+(op==='set'?'<label>Nama Pos Alokasi</label><input id="fN" value="'+esc(b.name)+'">':'')+'<label>'+(op==='set'?'Saldo Baru':'Nominal Ditambahkan/Dikurangi')+'</label><input id="fA" inputmode="numeric" placeholder="Rp 0" value="'+(op==='set'?'Rp '+b.bal.toLocaleString('id-ID'):'')+'" oninput="var n=num(this.value);this.value=n?\'Rp \'+n.toLocaleString(\'id-ID\'):\'\'"><div class="row" style="margin-top:16px"><button class="btn g" onclick="closeM()">Batal</button><button class="btn" onclick="doFund(\''+id+'\',\''+op+'\')">Simpan Alokasi</button></div>');
-  setTimeout(function(){
-    var fa=document.getElementById('fA');
-    if(fa) fa.focus();
-  },50);
-}
-
-function doFund(id,op){
-  var b=bg.find(function(x){return x.id===id}),n=num(document.getElementById('fA').value);
-  if(op==='add')b.bal+=n;else if(op==='sub')b.bal-=n;
-  else{
-    b.bal=n;
-    var fn=document.getElementById('fN');
-    if(fn) b.name=fn.value.trim()||b.name;
-  }
-  save();closeM();renderFunds();toast('Saldo alokasi diperbarui');
-}
-
-function renderCats(){
-  var catList=document.getElementById('catList');
-  if(!catList)return;
-  catList.innerHTML=['in','out'].map(function(ty){return '<div class="grp">'+(ty==='in'?'Pemasukan':'Pengeluaran')+'</div>'+cats.filter(function(c){return c.type===ty}).map(function(c){return '<div class="cat">'+(c.icon||'•')+'<span>'+esc(c.name)+'<br><small style="color:var(--mt);font-size:11px">'+esc(c.kw||'—')+'</small></span><button class="btn s g '+(!isAdmin?'read-lock':'')+'" onclick="editCat(\''+c.id+'\')">✎</button><button class="btn s r '+(!isAdmin?'read-lock':'')+'" onclick="delCat(\''+c.id+'\')">×</button></div>'}).join('')}).join('');
-}
-
-function addCat(){
-  if(!isAdmin)return showLoginModal();
-  var newCat=document.getElementById('newCat');
-  var newCatType=document.getElementById('newCatType');
-  var newCatKw=document.getElementById('newCatKw');
-  
-  var n=newCat.value.trim();if(!n)return toast('Isi nama kategori');
-  cats.push({id:uid(),name:n,type:newCatType.value,icon:newCatType.value==='in'?'💚':'🔻',kw:newCatKw.value.trim()||n.toLowerCase()});
-  newCat.value=newCatKw.value='';save();renderAll();toast('Kategori berhasil ditambahkan');
-}
-
-function editCat(id){
-  if(!isAdmin)return showLoginModal();
-  var c=cats.find(function(x){return x.id===id});
-  openM('<h2>Edit Kategori</h2><div class="row"><div style="flex:0 0 70px"><label>Ikon</label><input id="cI" value="'+esc(c.icon)+'"></div><div><label>Nama Kategori</label><input id="cN" value="'+esc(c.name)+'"></div></div><label>Jenis</label><select id="cT"><option value="in" '+(c.type==='in'?'selected':'')+'>Pemasukan</option><option value="out" '+(c.type==='out'?'selected':'')+'>Pengeluaran</option></select><label>Kata Kunci Deteksi Otomatis</label><input id="cK" value="'+esc(c.kw)+'"><div class="row" style="margin-top:16px"><button class="btn g" onclick="closeM()">Batal</button><button class="btn" onclick="updCat(\''+id+'\')">Simpan Kategori</button></div>');
-}
-
-function updCat(id){
-  var c=cats.find(function(x){return x.id===id});
-  Object.assign(c,{
-    icon:document.getElementById('cI').value.trim(),
-    name:document.getElementById('cN').value.trim()||c.name,
-    type:document.getElementById('cT').value,
-    kw:document.getElementById('cK').value.trim()
-  });
-  save();closeM();renderAll();toast('Kategori diperbarui');
-}
-
-function delCat(id){
-  if(!isAdmin)return showLoginModal();
-  var used=tx.filter(function(t){return t.category===id}).length;
-  if(!confirm(used?'Kategori dipakai oleh '+used+' transaksi. Hapus?':'Hapus kategori ini?'))return;
-  cats=cats.filter(function(c){return c.id!==id});save();renderAll();
-}
-
-function dl(name,data,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:type}));a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000)}
-
-function expJSON(){
-  dl('bazis-alfajar-'+ymd(new Date())+'.json',JSON.stringify({transactions:tx,budgets:bg,categories:cats},null,2),'application/json');
-}
-
-function clearSample(){
-  if(!isAdmin)return showLoginModal();
-  var n=tx.filter(function(t){return t.isSample}).length;if(!n)return toast('Tidak ada data contoh');
-  if(!confirm('Hapus '+n+' data contoh?'))return;
-  tx=tx.filter(function(t){return !t.isSample});save();renderAll();toast('Data contoh berhasil dihapus');
-}
-
-function resetAll(){
-  if(!isAdmin)return showLoginModal();
-  if(!confirm('Hapus SEMUA transaksi & reset seluruh data? Tindakan ini tidak bisa dibatalkan!'))return;
-  tx=[];bg=DEF_BG.map(function(b){return Object.assign({},b)});save();renderAll();toast('Semua data berhasil dibersihkan');
-}
-
-var DUR=[[3,'3 Bln'],[6,'6 Bln'],[9,'9 Bln'],[12,'12 Bln'],[0,'Semua']];
-
-function monthsList(){
-  var keys=[];
-  if(dur){
-    for(var i=dur-1;i>=0;i--){
-      var d=new Date(cur.getFullYear(),cur.getMonth()-i,1);
-      keys.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
-    }
-  }else{
-    var setK={};tx.forEach(function(t){setK[ym(t.date)]=true});
-    keys=Object.keys(setK).sort();
-    if(!keys.length)keys=[curYM()];
-  }
-  return keys;
-}
-
-function renderCharts(){
-  if(typeof Chart==='undefined')return;
-  var keys=monthsList(),setK={};keys.forEach(function(k){setK[k]=true});
-  var l=tx.filter(function(t){return setK[ym(t.date)]});
-  var ti=sum(l,'in'),to=sum(l,'out');
-  document.getElementById('cIn').textContent=rp(ti);
-  document.getElementById('cOut').textContent=rp(to);
-  var cNet=document.getElementById('cNet');
-  cNet.textContent=rp(ti-to);cNet.className=ti-to<0?'exp':'inc';
-  
-  var lbl=keys.map(function(k){return MON[+k.slice(5)-1].slice(0,3)+' '+k.slice(2,4)});
-  var per=keys.map(function(k){var m=l.filter(function(t){return ym(t.date)===k});return{i:sum(m,'in'),o:sum(m,'out')}});
-  
-  var cs=getComputedStyle(document.documentElement),tc=cs.getPropertyValue('--mt').trim(),gc=cs.getPropertyValue('--bd').trim(),ci=cs.getPropertyValue('--in').trim(),co=cs.getPropertyValue('--out').trim();
-  Chart.defaults.color=tc;Chart.defaults.borderColor=gc;
-  
-  Object.keys(charts).forEach(function(k){if(charts[k])charts[k].destroy()});
-  
-  var chBar=document.getElementById('chBar');
-  if(chBar){
-    charts.bar=new Chart(chBar,{
-      type:'bar',
-      data:{
-        labels:lbl,
-        datasets:[
-          {label:'Pemasukan',data:per.map(function(p){return p.i}),backgroundColor:ci,borderRadius:6},
-          {label:'Pengeluaran',data:per.map(function(p){return p.o}),backgroundColor:co,borderRadius:6}
-        ]
-      },
-      options:{
-        responsive:true,
-        plugins:{tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+rp(c.raw)}}}},
-        scales:{y:{ticks:{callback:function(v){return v>=1e6?(v/1e6)+'jt':v>=1e3?(v/1e3)+'rb':v}}}}
-      }
-    });
-  }
-
-  var byCat={};l.filter(function(t){return t.type==='out'}).forEach(function(t){byCat[t.category]=(byCat[t.category]||0)+ +t.amount});
-  var pal=['#0DCEA0','#FF6B6B','#4DA3FF','#FFC145','#B07CFF','#FF8FB1','#5EE1E6','#9BE15D','#FF9F45','#8299AD'];
-  var ce=Object.keys(byCat).map(function(k){return [k,byCat[k]]}).sort(function(a,b){return b[1]-a[1]});
-  
-  var chPie=document.getElementById('chPie');
-  if(chPie){
-    charts.pie=new Chart(chPie,{
-      type:'doughnut',
-      data:{
-        labels:ce.map(function(e){return catOf(e[0]).name}),
-        datasets:[{data:ce.map(function(e){return e[1]}),backgroundColor:pal,borderWidth:0}]
-      },
-      options:{
-        plugins:{
-          legend:{position:'bottom'},
-          tooltip:{callbacks:{label:function(c){return c.label+': '+rp(c.raw)}}}
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
         }
       }
-    });
-  }
-
-  var usedObj={};l.forEach(function(t){usedObj[t.category]=true});
-  var usedCats=Object.keys(usedObj).sort(function(a,b){return catOf(a).type.localeCompare(catOf(b).type)});
-  var h='<table><tr><th>Kategori</th>'+lbl.map(function(x){return '<th>'+x+'</th>'}).join('')+'<th>Total</th></tr>';
-  
-  ['in','out'].forEach(function(ty){
-    var cl=usedCats.filter(function(c){return catOf(c).type===ty});if(!cl.length)return;
-    h+='<tr><td colspan="'+(keys.length+2)+'" class="'+(ty==='in'?'inc':'exp')+'" style="font-weight:800;background:var(--sf2)">'+(ty==='in'?'PEMASUKAN':'PENGELUARAN')+'</td></tr>';
-    for(var i=0;i<cl.length;i++){
-      var c=cl[i];
-      var vals=keys.map(function(k){return l.filter(function(t){return t.category===c&&t.type===ty&&ym(t.date)===k}).reduce(function(a,t){return a+ +t.amount},0)});
-      h+='<tr><td>'+(catOf(c).icon||'')+' '+esc(catOf(c).name)+'</td>'+vals.map(function(v){return '<td>'+(v?v.toLocaleString('id-ID'):'-')+'</td>'}).join('')+'<td><b>'+vals.reduce(function(a,b){return a+b},0).toLocaleString('id-ID')+'</b></td></tr>';
     }
-  });
-  
-  var catTable=document.getElementById('catTable');
-  if(catTable) catTable.innerHTML=usedCats.length?h+'</table>':'<div class="empty">Belum ada data</div>';
-  
-  var run=0;
-  var before=tx.filter(function(t){return ym(t.date)<keys[0]});
-  run=sum(before,'in')-sum(before,'out');
-  
-  var monTable=document.getElementById('monTable');
-  if(monTable){
-    monTable.innerHTML='<table><tr><th>Bulan</th><th>Masuk</th><th>Keluar</th><th>Sisa</th><th>Saldo Akhir</th></tr>'+per.map(function(p,i){
-      run+=p.i-p.o;
-      return '<tr><td>'+lbl[i]+'</td><td class="inc">'+rp(p.i)+'</td><td class="exp">'+rp(p.o)+'</td><td>'+rp(p.i-p.o)+'</td><td><b>'+rp(run)+'</b></td></tr>';
-    }).join('')+'<tr><td><b>Total</b></td><td class="inc"><b>'+rp(ti)+'</b></td><td class="exp"><b>'+rp(to)+'</b></td><td><b>'+rp(ti-to)+'</b></td><td></td></tr></table>';
-  }
-}
+  </script>
 
-function exportReportCSV(){
-  if(!isAdmin)return;
-  var keys=monthsList(),setK={};keys.forEach(function(k){setK[k]=true});
-  var l=tx.filter(function(t){return setK[ym(t.date)]});
-  var csv='\ufeffID,Tanggal,Keterangan,Catatan,Nominal,Jenis,Kategori\n';
-  sorted(l).forEach(function(t){
-    csv+='"'+t.id+'","'+t.date+'","'+t.desc.replace(/"/g,'""')+'","'+(t.note||'').replace(/"/g,'""')+'",'+t.amount+',"'+(t.type==='in'?'Pemasukan':'Pengeluaran')+'","'+catOf(t.category).name.replace(/"/g,'""')+'"\n';
-  });
-  dl('laporan-bazis-'+ymd(new Date())+'.csv',csv,'text/csv');
-  toast('Laporan CSV berhasil diunduh');
-}
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF & autoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-function exportReportPDF(){
-  if(!isAdmin)return;
-  toast('Memproses file PDF...');
-  var jsPDF=window.jspdf.jsPDF;
-  var element=document.getElementById('printableArea');
-  var nav=document.querySelector('nav');
-  nav.style.display='none';
-  
-  html2canvas(element,{scale:2,useCORS:true}).then(function(canvas){
-    var imgData=canvas.toDataURL('image/png');
-    var pdf=new jsPDF('p','mm','a4');
-    var pdfWidth=pdf.internal.pageSize.getWidth();
-    var pdfHeight=(canvas.height*pdfWidth)/canvas.width;
-    
-    var heightLeft=pdfHeight;
-    var position=0;
-    
-    pdf.addImage(imgData,'PNG',0,position,pdfWidth,pdfHeight);
-    heightLeft-=pdf.internal.pageSize.getHeight();
-    
-    while(heightLeft>=0){
-      position=heightLeft-pdfHeight;
-      pdf.addPage();
-      pdf.addImage(imgData,'PNG',0,position,pdfWidth,pdfHeight);
-      heightLeft-=pdf.internal.pageSize.getHeight();
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
     }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen pb-24 transition-colors duration-200">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-30 bg-emerald-800 dark:bg-gray-800 text-white shadow-md transition-colors">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logos & Title -->
+      <div class="flex items-center space-x-3">
+        <div id="logoContainer" class="flex items-center space-x-2">
+          <img id="logoMasjid" src="https://placehold.co/80x80/047857/ffffff?text=MASJID" alt="Logo Masjid" class="w-10 h-10 rounded-full bg-white p-0.5 object-cover border border-emerald-400">
+          <img id="logoBazis" src="https://placehold.co/80x80/065f46/ffffff?text=BAZIS" alt="Logo BAZIS" class="w-10 h-10 rounded-full bg-white p-0.5 object-cover border border-emerald-400">
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">MASJID AL-FAJAR</h1>
+          <p class="text-xs text-emerald-200 dark:text-emerald-400 font-medium">Laporan BAZIS & Kas</p>
+        </div>
+      </div>
+
+      <!-- Controls Right (Theme & Admin Badge/Login) -->
+      <div class="flex items-center space-x-2">
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-full bg-emerald-700 dark:bg-gray-700 hover:bg-emerald-600 dark:hover:bg-gray-600 text-amber-300 transition">
+          <i id="themeIcon" class="fas me-0 fa-moon"></i>
+        </button>
+
+        <button id="authBtn" onclick="handleAuthAction()" class="flex items-center space-x-1 text-xs px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 dark:bg-gray-700 dark:hover:bg-gray-600 border border-emerald-500/30 transition">
+          <i id="authIcon" class="fas fa-lock text-xs"></i>
+          <span id="authText">Admin Login</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-4xl mx-auto px-4 pt-4 space-y-4">
+
+    <!-- HERO BALANCES CARD -->
+    <div class="bg-gradient-to-br from-emerald-700 to-emerald-900 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+      <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl">
+        <i class="fas fa-mosque"></i>
+      </div>
+
+      <div class="relative z-10 space-y-4">
+        <!-- Main Balance -->
+        <div class="flex justify-between items-start border-b border-emerald-600/50 pb-3">
+          <div>
+            <span class="text-xs font-medium text-emerald-200 uppercase tracking-wider">Total Saldo Kas BAZIS</span>
+            <div id="totalBalanceText" class="text-2xl sm:text-3xl font-extrabold mt-0.5">Rp 0</div>
+          </div>
+          <span id="statusBadge" class="text-[10px] bg-emerald-600/80 border border-emerald-400/40 text-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Synchronized
+          </span>
+        </div>
+
+        <!-- Income & Expense Summary -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-600/30">
+            <div class="text-xs text-emerald-200 flex items-center gap-1">
+              <i class="fas font-black fa-arrow-down text-emerald-300"></i> Total Pemasukan
+            </div>
+            <div id="totalIncomeText" class="text-sm sm:text-base font-bold text-emerald-100 mt-0.5">Rp 0</div>
+          </div>
+          <div class="bg-emerald-800/60 p-2.5 rounded-xl border border-emerald-600/30">
+            <div class="text-xs text-emerald-200 flex items-center gap-1">
+              <i class="fas font-black fa-arrow-up text-rose-300"></i> Total Pengeluaran
+            </div>
+            <div id="totalExpenseText" class="text-sm sm:text-base font-bold text-rose-100 mt-0.5">Rp 0</div>
+          </div>
+        </div>
+
+        <!-- Account Info & Contact Info -->
+        <div class="pt-2 text-xs text-emerald-100 space-y-1 bg-emerald-950/30 p-3 rounded-xl border border-emerald-600/20">
+          <div class="flex items-center justify-between">
+            <span><i class="fas fa-university mr-1.5 text-emerald-300"></i><strong>BSI:</strong> 7306872456</span>
+            <span class="text-[11px] opacity-90">a.n. Bazis Masjid Al-Fajar</span>
+          </div>
+          <div class="pt-1 border-t border-emerald-800/50">
+            <div><i class="fas fa-user-shield mr-1.5 text-emerald-300"></i><strong>Kontak Pengurus:</strong></div>
+            <div class="pl-5 text-emerald-200 font-mono">0821-7715-6145 - Eko Mardianto</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTH NAVIGATOR CARD -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+      <button onclick="changeMonth(-1)" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="text-center">
+        <h2 id="currentMonthDisplay" class="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-100">Oktober 2026</h2>
+        <p id="monthlySummarySub" class="text-xs text-gray-500 dark:text-gray-400">Masuk: Rp 0 | Keluar: Rp 0</p>
+      </div>
+      <button onclick="changeMonth(1)" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- TAB CONTENTS -->
+
+    <!-- 1. INPUT TAB (ADMIN ONLY) -->
+    <section id="tab-input" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+        <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
+          <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+            <i class="fas fa-pen-to-square"></i> Input Transaksi Baru
+          </h3>
+          <span class="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">Mode Admin</span>
+        </div>
+
+        <!-- Smart Chat Parser -->
+        <div class="space-y-1">
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">
+            Teks Cepat / Auto Parser <span class="text-gray-400">(Format: Nama [Spasi] Jumlah)</span>
+          </label>
+          <div class="flex gap-2">
+            <input type="text" id="smartInput" placeholder="Contoh: infaq jumat 1250000 atau beli air galon 25000" class="flex-1 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+            <button onclick="parseSmartText()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl text-sm transition">
+              Parse
+            </button>
+          </div>
+        </div>
+
+        <form id="transactionForm" onsubmit="saveTransaction(event)" class="space-y-3 pt-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Jenis Transaksi -->
+            <div>
+              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Jenis</label>
+              <select id="txType" onchange="updateCategoryDropdown()" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+                <option value="in">Pemasukan (Masuk)</option>
+                <option value="out">Pengeluaran (Keluar)</option>
+              </select>
+            </div>
+
+            <!-- Tanggal -->
+            <div>
+              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal</label>
+              <input type="date" id="txDate" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Deskripsi -->
+            <div>
+              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Judul / Deskripsi</label>
+              <input type="text" id="txTitle" placeholder="Contoh: Infaq Harian" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+            </div>
+
+            <!-- Jumlah -->
+            <div>
+              <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Jumlah (Rp)</label>
+              <input type="number" id="txAmount" min="0" placeholder="0" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+            </div>
+          </div>
+
+          <!-- Kategori -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
+            <select id="txCategory" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+              <!-- Dynamically Populated -->
+            </select>
+          </div>
+
+          <!-- Extra Note / Keterangan -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Catatan Tambahan / Keterangan (Opsional)</label>
+            <textarea id="txNote" rows="2" placeholder="Catatan opsional..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white"></textarea>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" id="btnSaveTx" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+              <i class="fas fa-save"></i> Simpan Transaksi
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2. HISTORY TAB -->
+    <section id="tab-riwayat" class="tab-content space-y-3">
+      <!-- Search & Filters -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
+        <div class="relative">
+          <i class="fas fa-search absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+          <input type="text" id="searchHistory" oninput="renderHistory()" placeholder="Cari transaksi..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <select id="filterType" onchange="renderHistory()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 dark:text-white">
+            <option value="all">Semua Jenis</option>
+            <option value="in">Pemasukan</option>
+            <option value="out">Pengeluaran</option>
+          </select>
+
+          <select id="filterCategory" onchange="renderHistory()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 dark:text-white">
+            <option value="all">Semua Kategori</option>
+          </select>
+
+          <select id="filterScope" onchange="renderHistory()" class="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 dark:text-white">
+            <option value="month">Bulan Ini</option>
+            <option value="all">Semua Waktu</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- History List -->
+      <div id="historyListContainer" class="space-y-3">
+        <!-- Dynamically filled -->
+      </div>
+    </section>
+
+    <!-- 3. ALLOCATION TAB (ALOKASI DANA) -->
+    <section id="tab-alokasi" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+        <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
+          <div>
+            <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+              <i class="fas fa-vault"></i> Pos Alokasi Dana Pos & Program
+            </h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Cadangan dan pembagian alokasi saldo BAZIS</p>
+          </div>
+          <button id="btnAddAllocation" onclick="openAllocationModal()" class="admin-only hidden bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+            <i class="fas fa-plus"></i> Pos Baru
+          </button>
+        </div>
+
+        <!-- Total Allocation Summary Card -->
+        <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 p-3.5 rounded-xl flex items-center justify-between">
+          <span class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">Total Alokasi Terencana:</span>
+          <span id="totalAllocationSum" class="text-base font-bold text-emerald-700 dark:text-emerald-400">Rp 0</span>
+        </div>
+
+        <div id="allocationCardsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Dynamically filled -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. MANAGEMENT TAB (PENGURUS) -->
+    <section id="tab-pengurus" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+        <div class="text-center border-b dark:border-gray-700 pb-3">
+          <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400">SUSUNAN PENGURUS BAZIS MASJID AL-FAJAR</h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Masa Bakti Periode 2023 - 2027</p>
+        </div>
+
+        <!-- Structure Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- Ketua -->
+          <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-2 text-lg font-bold">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Ketua</span>
+            <h4 class="font-bold text-gray-800 dark:text-gray-100 mt-0.5">Eko Mardianto</h4>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-mono">0821-7715-6145</p>
+          </div>
+
+          <!-- Sekretaris -->
+          <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-2 text-lg font-bold">
+              <i class="fas fa-file-signature"></i>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Sekretaris</span>
+            <h4 class="font-bold text-gray-800 dark:text-gray-100 mt-0.5">Maulana RH</h4>
+          </div>
+
+          <!-- Bendahara -->
+          <div class="bg-emerald-50 dark:bg-gray-900/60 border border-emerald-200 dark:border-gray-700 rounded-xl p-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto mb-2 text-lg font-bold">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Bendahara</span>
+            <h4 class="font-bold text-gray-800 dark:text-gray-100 mt-0.5">M. Fathur Rohman</h4>
+          </div>
+        </div>
+
+        <!-- Anggota List -->
+        <div class="bg-gray-50 dark:bg-gray-900/40 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+          <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <i class="fas fa-users text-emerald-600"></i> Anggota Tim Pengurus
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">1</span>
+              Nur Cholis
+            </div>
+            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">2</span>
+              Muhalif
+            </div>
+            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">3</span>
+              Supriyadi
+            </div>
+            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">4</span>
+              Ari Nastoro
+            </div>
+            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">5</span>
+              Muhawan
+            </div>
+            <div class="p-2.5 bg-white dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 flex items-center justify-center text-[10px] font-bold">6</span>
+              Sarto Ardi
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SETTINGS TAB (ADMIN ONLY) -->
+    <section id="tab-pengaturan" class="tab-content hidden space-y-4">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 space-y-5">
+        <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
+          <h3 class="font-bold text-base text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+            <i class="fas fa-gear"></i> Pengaturan Aplikasi
+          </h3>
+          <span class="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded font-semibold">Khusus Admin</span>
+        </div>
+
+        <!-- Logo Upload Section -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Kustomisasi Logo Header</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Upload Logo Masjid</label>
+              <input type="file" id="fileMasjidLogo" accept="image/*" onchange="uploadLogo('masjid')" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-gray-700 dark:file:text-emerald-300">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Upload Logo BAZIS</label>
+              <input type="file" id="fileBazisLogo" accept="image/*" onchange="uploadLogo('bazis')" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-gray-700 dark:file:text-emerald-300">
+            </div>
+          </div>
+        </div>
+
+        <!-- Reset & Seed Data Controls -->
+        <div class="pt-3 border-t dark:border-gray-700 space-y-3">
+          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Manajemen Data Kas</h4>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="seedSampleData()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold transition">
+              <i class="fas fa-database mr-1"></i> Muat Data Contoh
+            </button>
+            <button onclick="confirmResetData()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition">
+              <i class="fas fa-trash mr-1"></i> Reset / Hapus Semua Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. CHARTS & REPORTS TAB -->
+    <section id="tab-grafik" class="tab-content hidden space-y-4">
+      <!-- Admin Export Bar -->
+      <div id="exportAdminBar" class="admin-only hidden bg-emerald-900 text-white p-3 rounded-2xl shadow-sm flex items-center justify-between">
+        <span class="text-xs font-medium flex items-center gap-1.5">
+          <i class="fas fa-file-export text-emerald-300"></i> Opsi Ekspor Laporan Admin
+        </span>
+        <div class="flex gap-2">
+          <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+            <i class="fas fa-file-csv"></i> CSV
+          </button>
+          <button onclick="exportPDF()" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+            <i class="fas fa-file-pdf"></i> PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Monthly Cashflow Bar Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 uppercase tracking-wider">Arus Kas Bulanan</h4>
+          <div class="relative h-60">
+            <canvas id="barChartCashflow"></canvas>
+          </div>
+        </div>
+
+        <!-- Expense Doughnut Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+          <h4 class="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 uppercase tracking-wider">Proporsi Pengeluaran per Kategori</h4>
+          <div class="relative h-60">
+            <canvas id="doughnutChartCategory"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rekap Summary Tables -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
+        <h4 class="text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider border-b dark:border-gray-700 pb-2">
+          Ringkasan per Kategori (Bulan Ini)
+        </h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead class="text-gray-500 dark:text-gray-400 border-b dark:border-gray-700">
+              <tr>
+                <th class="py-2 px-2">Kategori</th>
+                <th class="py-2 px-2 text-right">Pemasukan</th>
+                <th class="py-2 px-2 text-right">Pengeluaran</th>
+              </tr>
+            </thead>
+            <tbody id="categorySummaryTableBody" class="divide-y divide-gray-100 dark:divide-gray-700">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 shadow-lg">
+    <div class="max-w-4xl mx-auto flex items-center justify-around text-center py-2 px-1">
+      <button onclick="switchTab('input')" id="nav-input" class="admin-only hidden nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+        <i class="fas fa-plus-circle text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Input</span>
+      </button>
+
+      <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn flex-1 flex flex-col items-center py-1 text-emerald-600 dark:text-emerald-400 font-bold">
+        <i class="fas fa-list-check text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Riwayat</span>
+      </button>
+
+      <button onclick="switchTab('alokasi')" id="nav-alokasi" class="nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+        <i class="fas fa-vault text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Alokasi</span>
+      </button>
+
+      <button onclick="switchTab('pengurus')" id="nav-pengurus" class="nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+        <i class="fas fa-users-gear text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Pengurus</span>
+      </button>
+
+      <button onclick="switchTab('grafik')" id="nav-grafik" class="nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+        <i class="fas fa-chart-pie text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Grafik</span>
+      </button>
+
+      <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="admin-only hidden nav-btn flex-1 flex flex-col items-center py-1 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+        <i class="fas fa-gear text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Pengaturan</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MODAL: LOGIN ADMIN -->
+  <div id="loginModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4 border border-gray-100 dark:border-gray-700">
+      <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
+        <h3 class="font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+          <i class="fas fa-user-shield text-emerald-600"></i> Login Admin BAZIS
+        </h3>
+        <button onclick="closeModal('loginModal')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      <div id="loginErrorMsg" class="hidden text-xs bg-red-100 text-red-700 p-2.5 rounded-lg"></div>
+
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+          <input type="text" id="loginUser" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+          <input type="password" id="loginPass" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition">
+          Masuk Admin
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ALLOCATION EDIT/ADD -->
+  <div id="allocationModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4 border border-gray-100 dark:border-gray-700">
+      <div class="flex items-center justify-between border-b dark:border-gray-700 pb-3">
+        <h3 id="allocModalTitle" class="font-bold text-gray-800 dark:text-gray-100">Tambah Pos Alokasi</h3>
+        <button onclick="closeModal('allocationModal')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveAllocation(event)" class="space-y-3">
+        <input type="hidden" id="allocId">
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Pos / Program</label>
+          <input type="text" id="allocName" required placeholder="Contoh: Operasional & Listrik" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Jumlah Alokasi (Rp)</label>
+          <input type="number" id="allocAmount" required min="0" placeholder="0" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white">
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition">
+          Simpan Pos Alokasi
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ALERT / MESSAGE -->
+  <div id="alertModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-xs w-full p-5 shadow-xl text-center space-y-3 border border-gray-100 dark:border-gray-700">
+      <div id="alertIconContainer" class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center text-xl">
+        <i id="alertIcon" class="fas fa-circle-check"></i>
+      </div>
+      <h4 id="alertTitle" class="font-bold text-gray-800 dark:text-gray-100 text-sm">Pemberitahuan</h4>
+      <p id="alertMsg" class="text-xs text-gray-600 dark:text-gray-300"></p>
+      <button onclick="closeModal('alertModal')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs transition">
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <!-- FIREBASE INTEGRATION SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // App ID & Configuration setup
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'bazis-alfajar-default';
+    let firebaseConfig = null;
     
-    pdf.save('laporan-bazis-masjid-alfajar-'+ymd(new Date())+'.pdf');
-    toast('Laporan PDF berhasil diunduh');
-    nav.style.display='flex';
-  }).catch(function(){
-    toast('Gagal mencetak PDF');
-    nav.style.display='flex';
-  });
-}
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+      try {
+        firebaseConfig = JSON.parse(__firebase_config);
+      } catch (e) {
+        console.warn("Invalid firebase config parsed", e);
+      }
+    }
 
-function renderAll(){
-  renderSummary();fillCatFilter();renderRecent();renderHist();renderFunds();renderCats();
-  if(document.getElementById('t-chart').classList.contains('on'))renderCharts();
-}
-
-window.addEventListener('DOMContentLoaded', function(){
-  var inDateEl = document.getElementById('inDate');
-  if(inDateEl) inDateEl.value=ymd(new Date());
-
-  var impFEl = document.getElementById('impF');
-  if(impFEl){
-    impFEl.onchange=function(e){
-      if(!isAdmin)return showLoginModal();
-      var f=e.target.files[0];if(!f)return;
-      var r=new FileReader();
-      r.onload=function(){
-        try{
-          var d=JSON.parse(r.result);
-          var ids={};tx.forEach(function(t){ids[t.id]=true});
-          var n=0;
-          (d.categories||[]).forEach(function(c){if(!cats.some(function(x){return x.id===c.id}))cats.push(c)});
-          (d.transactions||(Array.isArray(d)?d:[])).forEach(function(t){
-            if(t&&t.date&&t.amount&&!ids[t.id]){
-              tx.push({id:t.id||uid(),date:t.date,desc:t.desc||'',note:t.note||'',amount:+t.amount,type:t.type==='in'?'in':'out',category:t.category||'',isSample:!!t.isSample});
-              n++;
-            }
-          });
-          (d.budgets||[]).forEach(function(b){
-            var x=bg.find(function(y){return y.id===b.id});
-            if(x)x.bal=+b.bal||x.bal;else bg.push(b);
-          });
-          save();renderAll();toast(n+' transaksi berhasil digabungkan');
-        }catch(err){toast('File JSON tidak valid')}impFEl.value='';
+    // Default Fallback Firebase Demo config if none exists
+    if (!firebaseConfig) {
+      firebaseConfig = {
+        apiKey: "AIzaSyDemoConfigKeyForBazisAlFajar123",
+        authDomain: "bazis-al-fajar.firebaseapp.com",
+        projectId: "bazis-al-fajar",
+        storageBucket: "bazis-al-fajar.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abcdef"
       };
-      r.readAsText(f);
-    };
-  }
+    }
 
-  var durChipsEl = document.getElementById('durChips');
-  if(durChipsEl){
-    durChipsEl.innerHTML=DUR.map(function(item){return '<button class="chip '+(item[0]===dur?'on':'')+'" data-v="'+item[0]+'">'+item[1]+'</button>'}).join('');
-    durChipsEl.onclick=function(e){
-      var b=e.target.closest('.chip');
-      if(!b)return;
-      dur=+b.dataset.v;
-      var children=durChipsEl.children;
-      for(var i=0;i<children.length;i++){
-        children[i].classList.toggle('on',children[i]===b);
+    let db = null;
+    let auth = null;
+    let isFirebaseConnected = false;
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+
+      // Auth flow
+      const initAuth = async () => {
+        try {
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+          isFirebaseConnected = true;
+          setupFirestoreListeners();
+        } catch (authErr) {
+          console.warn("Firebase Auth Error, falling back to local memory mode:", authErr);
+          isFirebaseConnected = false;
+          window.updateOnlineStatus(false);
+        }
+      };
+
+      initAuth();
+    } catch (err) {
+      console.warn("Firebase Initialization error, operating offline/local:", err);
+      isFirebaseConnected = false;
+      window.updateOnlineStatus(false);
+    }
+
+    // Paths
+    const getPublicCollectionPath = (collName) => `artifacts/${appId}/public/data/${collName}`;
+
+    function setupFirestoreListeners() {
+      if (!db) return;
+
+      // 1. Transactions Listener
+      const txCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'transactions');
+      onSnapshot(txCollRef, (snapshot) => {
+        const txList = [];
+        snapshot.forEach(docSnap => {
+          txList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        window.syncTransactionsFromRemote(txList);
+        window.updateOnlineStatus(true);
+      }, (error) => {
+        console.warn("Tx listener error:", error);
+        window.updateOnlineStatus(false);
+      });
+
+      // 2. Allocations Listener
+      const allocCollRef = collection(db, 'artifacts', appId, 'public', 'data', 'allocations');
+      onSnapshot(allocCollRef, (snapshot) => {
+        const allocList = [];
+        snapshot.forEach(docSnap => {
+          allocList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        window.syncAllocationsFromRemote(allocList);
+      }, (error) => {
+        console.warn("Alloc listener error:", error);
+      });
+    }
+
+    // Global Functions for Cloud Syncing
+    window.cloudSaveTransaction = async function(txData) {
+      if (isFirebaseConnected && db) {
+        try {
+          const txDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'transactions', txData.id);
+          await setDoc(txDocRef, txData);
+        } catch(e) { console.error("Cloud Tx save failed:", e); }
       }
+    };
+
+    window.cloudDeleteTransaction = async function(id) {
+      if (isFirebaseConnected && db) {
+        try {
+          const txDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'transactions', id);
+          await deleteDoc(txDocRef);
+        } catch(e) { console.error("Cloud Tx delete failed:", e); }
+      }
+    };
+
+    window.cloudSaveAllocation = async function(allocData) {
+      if (isFirebaseConnected && db) {
+        try {
+          const allocDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'allocations', allocData.id);
+          await setDoc(allocDocRef, allocData);
+        } catch(e) { console.error("Cloud Alloc save failed:", e); }
+      }
+    };
+
+    window.cloudDeleteAllocation = async function(id) {
+      if (isFirebaseConnected && db) {
+        try {
+          const allocDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'allocations', id);
+          await deleteDoc(allocDocRef);
+        } catch(e) { console.error("Cloud Alloc delete failed:", e); }
+      }
+    };
+
+    window.cloudBatchReset = async function(txList, allocList) {
+      if (isFirebaseConnected && db) {
+        // Delete old and write new
+        for (const t of txList) {
+          const ref = doc(db, 'artifacts', appId, 'public', 'data', 'transactions', t.id);
+          await setDoc(ref, t);
+        }
+        for (const a of allocList) {
+          const ref = doc(db, 'artifacts', appId, 'public', 'data', 'allocations', a.id);
+          await setDoc(ref, a);
+        }
+      }
+    };
+  </script>
+
+  <!-- MAIN APPLICATION JS -->
+  <script>
+    // --- STATE MANAGEMENT ---
+    let isAdmin = false;
+    let currentDate = new Date(); // Controls month view
+    let transactions = [];
+    let allocations = [];
+
+    const CATEGORIES = {
+      in: [
+        { id: 'Infaq Jumat', name: 'Infaq Jumat', icon: 'fa-hand-holding-dollar' },
+        { id: 'Infaq Harian', name: 'Infaq Harian / Kotak', icon: 'fa-box-archive' },
+        { id: 'Zakat Fitrah/Mal', name: 'Zakat Fitrah / Mal', icon: 'fa-wheat-awn' },
+        { id: 'Sedekah / Donasi', name: 'Sedekah / Donasi Hamba Allah', icon: 'fa-heart text-rose-500' },
+        { id: 'Lainnya In', name: 'Pemasukan Lainnya', icon: 'fa-circle-plus' }
+      ],
+      out: [
+        { id: 'Operasional & Kebersihan', name: 'Operasional & Kebersihan', icon: 'fa-broom' },
+        { id: 'Listrik & Air', name: 'Listrik & Air', icon: 'fa-bolt text-amber-500' },
+        { id: 'Pembangunan & Perbaikan', name: 'Pembangunan & Perbaikan', icon: 'fa-screwdriver-wrench' },
+        { id: 'Santunan & Sosial', name: 'Santunan & Kegiatan Sosial', icon: 'fa-hands-holding-child' },
+        { id: 'Pengajian & Acara', name: 'Pengajian / Hari Besar Islam', icon: 'fa-book-quran' },
+        { id: 'Lainnya Out', name: 'Pengeluaran Lainnya', icon: 'fa-circle-minus' }
+      ]
+    };
+
+    // Default Initial Seed
+    const DEFAULT_TRANSACTIONS = [
+      { id: 'tx-1', date: '2026-10-02', title: 'Infaq Kotak Jumat Perdana', amount: 1450000, type: 'in', category: 'Infaq Jumat', note: 'Penghitungan setelah sholat jumat' },
+      { id: 'tx-2', date: '2026-10-05', title: 'Pembayaran Rekening Listrik Masjid', amount: 350000, type: 'out', category: 'Listrik & Air', note: 'Token PLN 350rb' },
+      { id: 'tx-3', date: '2026-10-09', title: 'Infaq Kotak Jumat kedua', amount: 1200000, type: 'in', category: 'Infaq Jumat', note: 'Lancar' },
+      { id: 'tx-4', date: '2026-10-12', title: 'Beli Air Galon & Alat Kebersihan', amount: 65000, type: 'out', category: 'Operasional & Kebersihan', note: '3 Galon + Sabun Pel' },
+      { id: 'tx-5', date: '2026-10-15', title: 'Donasi Hamba Allah via Transfer BSI', amount: 500000, type: 'in', category: 'Sedekah / Donasi', note: 'Transfer BSI' }
+    ];
+
+    const DEFAULT_ALLOCATIONS = [
+      { id: 'alloc-1', name: 'Kas Operasional & Kebersihan', amount: 1500000 },
+      { id: 'alloc-2', name: 'Dana Santunan Anak Yatim', amount: 2000000 },
+      { id: 'alloc-3', name: 'Cadangan Pemeliharaan Bangunan', amount: 1000000 }
+    ];
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+      // Load Theme
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        updateThemeIcon(true);
+      } else {
+        document.documentElement.classList.remove('dark');
+        updateThemeIcon(false);
+      }
+
+      // Load Local Storage Initial Fallback
+      const localTx = localStorage.getItem('bazis_transactions');
+      transactions = localTx ? JSON.parse(localTx) : DEFAULT_TRANSACTIONS;
+
+      const localAlloc = localStorage.getItem('bazis_allocations');
+      allocations = localAlloc ? JSON.parse(localAlloc) : DEFAULT_ALLOCATIONS;
+
+      // Set default input date to today
+      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+
+      // Populate Category Dropdowns
+      updateCategoryDropdown();
+      populateFilterCategories();
+
+      // Load logos if stored
+      if (localStorage.getItem('logo_masjid')) {
+        document.getElementById('logoMasjid').src = localStorage.getItem('logo_masjid');
+      }
+      if (localStorage.getItem('logo_bazis')) {
+        document.getElementById('logoBazis').src = localStorage.getItem('logo_bazis');
+      }
+
+      // Initial Refresh & UI Render
+      refreshAllViews();
+    };
+
+    // --- REALTIME SYNC CALLBACKS FROM FIREBASE ---
+    window.syncTransactionsFromRemote = function(remoteList) {
+      if (remoteList && remoteList.length > 0) {
+        transactions = remoteList;
+        localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
+      }
+      refreshAllViews();
+    };
+
+    window.syncAllocationsFromRemote = function(remoteList) {
+      if (remoteList && remoteList.length > 0) {
+        allocations = remoteList;
+        localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
+      }
+      renderAllocations();
+    };
+
+    window.updateOnlineStatus = function(isOnline) {
+      const badge = document.getElementById('statusBadge');
+      if (isOnline) {
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Synchronized`;
+        badge.className = "text-[10px] bg-emerald-600/80 border border-emerald-400/40 text-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1";
+      } else {
+        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span> Local Mode`;
+        badge.className = "text-[10px] bg-amber-800/80 border border-amber-400/40 text-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1";
+      }
+    };
+
+    // --- REFRESH VIEWS ---
+    function refreshAllViews() {
+      updateSummaryCards();
+      renderHistory();
+      renderAllocations();
       renderCharts();
-    };
-  }
+    }
 
-  ['q','fType','fCat','fScope'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el) el.addEventListener('input',renderHist);
-  });
+    // --- THEME & UI HELPER ---
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateThemeIcon(isDark);
+      renderCharts(); // Re-render charts for dark mode contrast
+    }
 
-  var chatInEl = document.getElementById('chatIn');
-  if(chatInEl){
-    chatInEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();parseChat()}});
-    chatInEl.addEventListener('input',function(){chatInEl.style.height='auto';chatInEl.style.height=chatInEl.scrollHeight+'px'});
-  }
-
-  var navBtns=document.querySelectorAll('nav button');
-  for(var i=0;i<navBtns.length;i++){
-    navBtns[i].onclick=function(e){
-      var btn=e.currentTarget;
-      if((btn.dataset.t==='set'||btn.dataset.t==='input')&&!isAdmin)return showLoginModal();
-      for(var j=0;j<navBtns.length;j++){
-        navBtns[j].classList.toggle('on',navBtns[j]===btn);
+    function updateThemeIcon(isDark) {
+      const icon = document.getElementById('themeIcon');
+      if (isDark) {
+        icon.className = 'fas fa-sun';
+      } else {
+        icon.className = 'fas fa-moon';
       }
-      var tabs=document.querySelectorAll('.tab');
-      for(var k=0;k<tabs.length;k++){
-        tabs[k].classList.toggle('on',tabs[k].id==='t-'+btn.dataset.t);
-      }
-      if(btn.dataset.t==='chart')renderCharts();
-      if(btn.dataset.t==='input'&&isAdmin&&chatInEl)chatInEl.focus();
-      window.scrollTo(0,0);
-    };
-  }
+    }
 
-  applyTheme();
-  loadLogos();
-  updateAdminUI();
-  renderAll();
-});
-</script>
+    function formatRupiah(num) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0);
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Show selected
+      const selectedTab = document.getElementById(`tab-${tabName}`);
+      if (selectedTab) selectedTab.classList.remove('hidden');
+
+      // Update Nav Buttons
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
+        btn.classList.add('text-gray-500', 'dark:text-gray-400');
+      });
+
+      const activeNav = document.getElementById(`nav-${tabName}`);
+      if (activeNav) {
+        activeNav.classList.remove('text-gray-500', 'dark:text-gray-400');
+        activeNav.classList.add('text-emerald-600', 'dark:text-emerald-400', 'font-bold');
+      }
+
+      if (tabName === 'grafik') {
+        renderCharts();
+      }
+    }
+
+    // --- ADMIN AUTHENTICATION ---
+    function handleAuthAction() {
+      if (isAdmin) {
+        // Logout
+        isAdmin = false;
+        updateAdminUI();
+        showAlert("Berhasil Logout", "Anda kembali ke Mode Lihat Publik.");
+      } else {
+        // Show Login Modal
+        document.getElementById('loginUser').value = '';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginErrorMsg').classList.add('hidden');
+        openModal('loginModal');
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const u = document.getElementById('loginUser').value.trim();
+      const p = document.getElementById('loginPass').value.trim();
+
+      if (u === 'bazisalf' && p === 'gengbazis') {
+        isAdmin = true;
+        closeModal('loginModal');
+        updateAdminUI();
+        showAlert("Login Berhasil", "Selamat datang Admin BAZIS Masjid Al-Fajar!");
+      } else {
+        const errEl = document.getElementById('loginErrorMsg');
+        errEl.innerText = "Username atau Password salah!";
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function updateAdminUI() {
+      const authBtn = document.getElementById('authBtn');
+      const authText = document.getElementById('authText');
+      const authIcon = document.getElementById('authIcon');
+
+      const adminElements = document.querySelectorAll('.admin-only');
+
+      if (isAdmin) {
+        authText.innerText = "Logout Admin";
+        authIcon.className = "fas fa-right-from-bracket text-xs text-rose-300";
+        authBtn.className = "flex items-center space-x-1 text-xs px-3 py-1.5 rounded-lg bg-rose-700 hover:bg-rose-600 border border-rose-400/40 text-white transition";
+
+        adminElements.forEach(el => el.classList.remove('hidden'));
+      } else {
+        authText.innerText = "Admin Login";
+        authIcon.className = "fas fa-lock text-xs";
+        authBtn.className = "flex items-center space-x-1 text-xs px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 dark:bg-gray-700 dark:hover:bg-gray-600 border border-emerald-500/30 transition";
+
+        adminElements.forEach(el => el.classList.add('hidden'));
+        
+        // If current tab is admin-only, switch to history
+        const activeTab = document.querySelector('.tab-content:not(.hidden)');
+        if (activeTab && (activeTab.id === 'tab-input' || activeTab.id === 'tab-pengaturan')) {
+          switchTab('riwayat');
+        }
+      }
+
+      renderHistory();
+      renderAllocations();
+    }
+
+    // --- MONTH NAVIGATION ---
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      updateSummaryCards();
+      renderHistory();
+      renderCharts();
+    }
+
+    function updateSummaryCards() {
+      const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const y = currentDate.getFullYear();
+      const m = currentDate.getMonth();
+
+      document.getElementById('currentMonthDisplay').innerText = `${monthNames[m]} ${y}`;
+
+      // Calculate Total All Time
+      let totalIn = 0;
+      let totalOut = 0;
+
+      // Monthly Total
+      let monthIn = 0;
+      let monthOut = 0;
+
+      transactions.forEach(t => {
+        const amt = Number(t.amount) || 0;
+        if (t.type === 'in') totalIn += amt;
+        else if (t.type === 'out') totalOut += amt;
+
+        const d = new Date(t.date);
+        if (d.getFullYear() === y && d.getMonth() === m) {
+          if (t.type === 'in') monthIn += amt;
+          else if (t.type === 'out') monthOut += amt;
+        }
+      });
+
+      const balance = totalIn - totalOut;
+
+      document.getElementById('totalBalanceText').innerText = formatRupiah(balance);
+      document.getElementById('totalIncomeText').innerText = formatRupiah(totalIn);
+      document.getElementById('totalExpenseText').innerText = formatRupiah(totalOut);
+
+      document.getElementById('monthlySummarySub').innerText = `Masuk: ${formatRupiah(monthIn)} | Keluar: ${formatRupiah(monthOut)}`;
+    }
+
+    // --- INPUT TAB LOGIC & PARSER ---
+    function updateCategoryDropdown() {
+      const type = document.getElementById('txType').value;
+      const catSelect = document.getElementById('txCategory');
+      catSelect.innerHTML = '';
+
+      CATEGORIES[type].forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        catSelect.appendChild(opt);
+      });
+    }
+
+    function parseSmartText() {
+      const text = document.getElementById('smartInput').value.trim();
+      if (!text) return;
+
+      // Basic regex parser: extract numbers at end
+      const match = text.match(/(.*?)\s+(\d+[\d\.]*)$/);
+      if (match) {
+        const title = match[1].trim();
+        const rawAmount = match[2].replace(/\./g, '');
+        const amount = parseInt(rawAmount, 10);
+
+        if (title && !isNaN(amount)) {
+          document.getElementById('txTitle').value = title;
+          document.getElementById('txAmount').value = amount;
+
+          // Auto detect type
+          const lower = title.toLowerCase();
+          if (lower.includes('beli') || lower.includes('bayar') || lower.includes('listrik') || lower.includes('keluar') || lower.includes('pembelian')) {
+            document.getElementById('txType').value = 'out';
+          } else {
+            document.getElementById('txType').value = 'in';
+          }
+          updateCategoryDropdown();
+
+          showAlert("Auto Parser Berhasil", `Berhasil mengekstrak "${title}" sebesar ${formatRupiah(amount)}.`);
+        }
+      } else {
+        showAlert("Format Parser", "Gunakan format contoh: 'infaq jumat 1250000'");
+      }
+    }
+
+    async function saveTransaction(e) {
+      e.preventDefault();
+      if (!isAdmin) return;
+
+      const type = document.getElementById('txType').value;
+      const date = document.getElementById('txDate').value;
+      const title = document.getElementById('txTitle').value.trim();
+      const amount = parseFloat(document.getElementById('txAmount').value) || 0;
+      const category = document.getElementById('txCategory').value;
+      const note = document.getElementById('txNote').value.trim();
+
+      const newTx = {
+        id: 'tx-' + Date.now(),
+        date,
+        type,
+        title,
+        amount,
+        category,
+        note
+      };
+
+      transactions.push(newTx);
+      localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
+
+      // Cloud save
+      if (window.cloudSaveTransaction) {
+        await window.cloudSaveTransaction(newTx);
+      }
+
+      // Reset Form
+      document.getElementById('transactionForm').reset();
+      document.getElementById('smartInput').value = '';
+      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+
+      refreshAllViews();
+      showAlert("Transaksi Disimpan", "Data transaksi berhasil disimpan ke laporan.");
+      switchTab('riwayat');
+    }
+
+    async function deleteTransaction(id) {
+      if (!isAdmin) return;
+
+      transactions = transactions.filter(t => t.id !== id);
+      localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
+
+      if (window.cloudDeleteTransaction) {
+        await window.cloudDeleteTransaction(id);
+      }
+
+      refreshAllViews();
+      showAlert("Dihapus", "Transaksi telah dihapus.");
+    }
+
+    // --- HISTORY TAB LOGIC ---
+    function populateFilterCategories() {
+      const filterSelect = document.getElementById('filterCategory');
+      filterSelect.innerHTML = '<option value="all">Semua Kategori</option>';
+
+      const allCats = [...CATEGORIES.in, ...CATEGORIES.out];
+      allCats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        filterSelect.appendChild(opt);
+      });
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyListContainer');
+      container.innerHTML = '';
+
+      const searchQuery = document.getElementById('searchHistory').value.toLowerCase();
+      const typeFilter = document.getElementById('filterType').value;
+      const catFilter = document.getElementById('filterCategory').value;
+      const scopeFilter = document.getElementById('filterScope').value;
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      // Filter logic
+      const filtered = transactions.filter(t => {
+        const tDate = new Date(t.date);
+
+        if (scopeFilter === 'month') {
+          if (tDate.getFullYear() !== year || tDate.getMonth() !== month) return false;
+        }
+
+        if (typeFilter !== 'all' && t.type !== typeFilter) return false;
+        if (catFilter !== 'all' && t.category !== catFilter) return false;
+
+        if (searchQuery) {
+          const matchTitle = (t.title || '').toLowerCase().includes(searchQuery);
+          const matchNote = (t.note || '').toLowerCase().includes(searchQuery);
+          const matchCat = (t.category || '').toLowerCase().includes(searchQuery);
+          if (!matchTitle && !matchNote && !matchCat) return false;
+        }
+
+        return true;
+      });
+
+      // Sort descending by date
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 text-center text-gray-400 border border-gray-100 dark:border-gray-700">
+            <i class="fas fa-folder-open text-3xl mb-2"></i>
+            <p class="text-xs">Tidak ada data transaksi ditemukan.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by Date Headers
+      let currentGroupDate = '';
+
+      filtered.forEach(t => {
+        const formattedDate = new Date(t.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+        if (formattedDate !== currentGroupDate) {
+          currentGroupDate = formattedDate;
+          const groupHeader = document.createElement('div');
+          groupHeader.className = 'text-[11px] font-bold text-gray-500 dark:text-gray-400 pt-2 pb-1 uppercase tracking-wider flex items-center gap-1.5';
+          groupHeader.innerHTML = `<i class="fas fa-calendar-day text-emerald-600"></i> ${formattedDate}`;
+          container.appendChild(groupHeader);
+        }
+
+        // Find Icon
+        const catObj = [...CATEGORIES.in, ...CATEGORIES.out].find(c => c.id === t.category);
+        const iconClass = catObj ? catObj.icon : 'fa-receipt';
+
+        const isIn = t.type === 'in';
+        const card = document.createElement('div');
+        card.className = "bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between gap-3 transition hover:border-emerald-200";
+
+        card.innerHTML = `
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <div class="w-10 h-10 rounded-xl ${isIn ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'} flex items-center justify-center shrink-0 text-base">
+              <i class="fas ${iconClass}"></i>
+            </div>
+            <div class="truncate">
+              <h4 class="font-semibold text-xs sm:text-sm text-gray-800 dark:text-gray-100 truncate">${t.title}</h4>
+              <p class="text-[11px] text-gray-400 dark:text-gray-400">${t.category || 'Umum'}</p>
+              ${t.note ? `<p class="text-[11px] text-gray-500 dark:text-gray-300 mt-0.5 truncate">💬 ${t.note}</p>` : ''}
+            </div>
+          </div>
+
+          <div class="text-right shrink-0">
+            <span class="font-bold text-xs sm:text-sm ${isIn ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'} block">
+              ${isIn ? '+' : '-'}${formatRupiah(t.amount)}
+            </span>
+            ${isAdmin ? `
+              <button onclick="deleteTransaction('${t.id}')" class="text-[10px] text-rose-500 hover:text-rose-700 mt-1 font-medium">
+                <i class="fas fa-trash-can mr-1"></i>Hapus
+              </button>
+            ` : ''}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // --- ALLOCATION TAB LOGIC ---
+    function renderAllocations() {
+      const container = document.getElementById('allocationCardsList');
+      container.innerHTML = '';
+
+      let totalSum = 0;
+
+      allocations.forEach(a => {
+        totalSum += Number(a.amount) || 0;
+
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 space-y-2';
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-gray-800 dark:text-gray-100">${a.name}</h4>
+            <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">${formatRupiah(a.amount)}</span>
+          </div>
+
+          ${isAdmin ? `
+            <div class="pt-2 border-t dark:border-gray-700 flex justify-end gap-2">
+              <button onclick="adjustAllocAmount('${a.id}', 500000)" class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-200 text-[10px] font-bold rounded">
+                +500k
+              </button>
+              <button onclick="adjustAllocAmount('${a.id}', -500000)" class="px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-200 text-[10px] font-bold rounded">
+                -500k
+              </button>
+              <button onclick="openAllocationModal('${a.id}')" class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-[10px] font-bold rounded">
+                Edit
+              </button>
+              <button onclick="deleteAllocation('${a.id}')" class="px-2 py-1 bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-200 text-[10px] font-bold rounded">
+                Hapus
+              </button>
+            </div>
+          ` : ''}
+        `;
+
+        container.appendChild(card);
+      });
+
+      document.getElementById('totalAllocationSum').innerText = formatRupiah(totalSum);
+    }
+
+    function openAllocationModal(id = null) {
+      if (!isAdmin) return;
+
+      if (id) {
+        const item = allocations.find(a => a.id === id);
+        if (item) {
+          document.getElementById('allocModalTitle').innerText = 'Edit Pos Alokasi';
+          document.getElementById('allocId').value = item.id;
+          document.getElementById('allocName').value = item.name;
+          document.getElementById('allocAmount').value = item.amount;
+        }
+      } else {
+        document.getElementById('allocModalTitle').innerText = 'Tambah Pos Alokasi Baru';
+        document.getElementById('allocId').value = '';
+        document.getElementById('allocName').value = '';
+        document.getElementById('allocAmount').value = '';
+      }
+
+      openModal('allocationModal');
+    }
+
+    async function handleSaveAllocation(e) {
+      e.preventDefault();
+      if (!isAdmin) return;
+
+      const id = document.getElementById('allocId').value;
+      const name = document.getElementById('allocName').value.trim();
+      const amount = parseFloat(document.getElementById('allocAmount').value) || 0;
+
+      let allocItem;
+      if (id) {
+        allocItem = allocations.find(a => a.id === id);
+        if (allocItem) {
+          allocItem.name = name;
+          allocItem.amount = amount;
+        }
+      } else {
+        allocItem = {
+          id: 'alloc-' + Date.now(),
+          name,
+          amount
+        };
+        allocations.push(allocItem);
+      }
+
+      localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
+      if (window.cloudSaveAllocation) {
+        await window.cloudSaveAllocation(allocItem);
+      }
+
+      closeModal('allocationModal');
+      renderAllocations();
+      showAlert("Alokasi Disimpan", "Data pos alokasi berhasil diperbarui.");
+    }
+
+    async function adjustAllocAmount(id, delta) {
+      if (!isAdmin) return;
+      const item = allocations.find(a => a.id === id);
+      if (item) {
+        item.amount = Math.max(0, (item.amount || 0) + delta);
+        localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
+        if (window.cloudSaveAllocation) {
+          await window.cloudSaveAllocation(item);
+        }
+        renderAllocations();
+      }
+    }
+
+    async function deleteAllocation(id) {
+      if (!isAdmin) return;
+      allocations = allocations.filter(a => a.id !== id);
+      localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
+      if (window.cloudDeleteAllocation) {
+        await window.cloudDeleteAllocation(id);
+      }
+      renderAllocations();
+      showAlert("Dihapus", "Pos alokasi dihapus.");
+    }
+
+    // --- LOGO UPLOADS & SETTINGS ---
+    function uploadLogo(type) {
+      const input = type === 'masjid' ? document.getElementById('fileMasjidLogo') : document.getElementById('fileBazisLogo');
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64 = e.target.result;
+        if (type === 'masjid') {
+          document.getElementById('logoMasjid').src = base64;
+          localStorage.setItem('logo_masjid', base64);
+        } else {
+          document.getElementById('logoBazis').src = base64;
+          localStorage.setItem('logo_bazis', base64);
+        }
+        showAlert("Logo Diperbarui", "Logo berhasil diupload dan disimpan.");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function seedSampleData() {
+      if (!isAdmin) return;
+      transactions = [...DEFAULT_TRANSACTIONS];
+      allocations = [...DEFAULT_ALLOCATIONS];
+
+      localStorage.setItem('bazis_transactions', JSON.stringify(transactions));
+      localStorage.setItem('bazis_allocations', JSON.stringify(allocations));
+
+      if (window.cloudBatchReset) {
+        await window.cloudBatchReset(transactions, allocations);
+      }
+
+      refreshAllViews();
+      showAlert("Data Contoh Dimuat", "Berhasil memuat contoh data transaksi awal.");
+    }
+
+    async function confirmResetData() {
+      if (!isAdmin) return;
+      if (confirm("Apakah Anda yakin ingin menghapus SELURUH transaksi dan alokasi dana?")) {
+        transactions = [];
+        allocations = [];
+        localStorage.removeItem('bazis_transactions');
+        localStorage.removeItem('bazis_allocations');
+
+        refreshAllViews();
+        showAlert("Reset Berhasil", "Semua data transaksi telah dibersihkan.");
+      }
+    }
+
+    // --- CHARTS & REPORTS LOGIC ---
+    let barChartInstance = null;
+    let doughnutChartInstance = null;
+
+    function renderCharts() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#e5e7eb' : '#374151';
+      const gridColor = isDark ? '#374151' : '#e5e7eb';
+
+      // 1. Bar Chart Cashflow (Last 6 Months)
+      const monthsData = [];
+      const now = new Date();
+
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthLabel = d.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
+        
+        let mIn = 0;
+        let mOut = 0;
+
+        transactions.forEach(t => {
+          const td = new Date(t.date);
+          if (td.getFullYear() === d.getFullYear() && td.getMonth() === d.getMonth()) {
+            if (t.type === 'in') mIn += Number(t.amount) || 0;
+            else if (t.type === 'out') mOut += Number(t.amount) || 0;
+          }
+        });
+
+        monthsData.push({ label: monthLabel, in: mIn, out: mOut });
+      }
+
+      const barCtx = document.getElementById('barChartCashflow').getContext('2d');
+      if (barChartInstance) barChartInstance.destroy();
+
+      barChartInstance = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: monthsData.map(m => m.label),
+          datasets: [
+            {
+              label: 'Pemasukan',
+              data: monthsData.map(m => m.in),
+              backgroundColor: '#059669',
+              borderRadius: 6
+            },
+            {
+              label: 'Pengeluaran',
+              data: monthsData.map(m => m.out),
+              backgroundColor: '#e11d48',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: textColor, font: { size: 10 } } }
+          },
+          scales: {
+            x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
+          }
+        }
+      });
+
+      // 2. Doughnut Category Breakdown (Current Month)
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+
+      const categoryTotals = {};
+      CATEGORIES.out.forEach(c => { categoryTotals[c.id] = 0; });
+
+      transactions.forEach(t => {
+        const td = new Date(t.date);
+        if (td.getFullYear() === currentYear && td.getMonth() === currentMonth && t.type === 'out') {
+          categoryTotals[t.category] = (categoryTotals[t.category] || 0) + (Number(t.amount) || 0);
+        }
+      });
+
+      const catLabels = Object.keys(categoryTotals);
+      const catData = Object.values(categoryTotals);
+
+      const doughnutCtx = document.getElementById('doughnutChartCategory').getContext('2d');
+      if (doughnutChartInstance) doughnutChartInstance.destroy();
+
+      doughnutChartInstance = new Chart(doughnutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: catLabels,
+          datasets: [{
+            data: catData,
+            backgroundColor: ['#059669', '#0284c7', '#d97706', '#e11d48', '#7c3aed', '#64748b']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } }
+          }
+        }
+      });
+
+      // 3. Category Summary Table
+      renderCategoryTable();
+    }
+
+    function renderCategoryTable() {
+      const tableBody = document.getElementById('categorySummaryTableBody');
+      tableBody.innerHTML = '';
+
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+
+      const summary = {};
+
+      const allCats = [...CATEGORIES.in, ...CATEGORIES.out];
+      allCats.forEach(c => {
+        summary[c.id] = { name: c.name, in: 0, out: 0 };
+      });
+
+      transactions.forEach(t => {
+        const td = new Date(t.date);
+        if (td.getFullYear() === currentYear && td.getMonth() === currentMonth) {
+          if (!summary[t.category]) {
+            summary[t.category] = { name: t.category, in: 0, out: 0 };
+          }
+          if (t.type === 'in') summary[t.category].in += Number(t.amount) || 0;
+          else if (t.type === 'out') summary[t.category].out += Number(t.amount) || 0;
+        }
+      });
+
+      Object.values(summary).forEach(s => {
+        if (s.in > 0 || s.out > 0) {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50';
+          tr.innerHTML = `
+            <td class="py-2 px-2 font-medium text-gray-800 dark:text-gray-200">${s.name}</td>
+            <td class="py-2 px-2 text-right font-semibold text-emerald-600 dark:text-emerald-400">${formatRupiah(s.in)}</td>
+            <td class="py-2 px-2 text-right font-semibold text-rose-600 dark:text-rose-400">${formatRupiah(s.out)}</td>
+          `;
+          tableBody.appendChild(tr);
+        }
+      });
+
+      if (tableBody.children.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-gray-400 text-xs">Belum ada transaksi di bulan ini</td></tr>`;
+      }
+    }
+
+    // --- EXPORT FUNCTIONALITY ---
+    function exportCSV() {
+      if (!isAdmin) return;
+
+      let csv = "ID,Tanggal,Jenis,Kategori,Judul,Jumlah,Keterangan\n";
+      transactions.forEach(t => {
+        const row = [
+          t.id,
+          t.date,
+          t.type === 'in' ? 'Pemasukan' : 'Pengeluaran',
+          `"${t.category || ''}"`,
+          `"${t.title || ''}"`,
+          t.amount,
+          `"${t.note || ''}"`
+        ];
+        csv += row.join(",") + "\n";
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Laporan_BAZIS_AlFajar_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportPDF() {
+      if (!isAdmin) return;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(14);
+      doc.text("LAPORAN KAS BAZIS MASJID AL-FAJAR", 14, 15);
+      doc.setFontSize(10);
+      doc.text(`Periode: ${document.getElementById('currentMonthDisplay').innerText}`, 14, 22);
+      doc.text(`Dicetak Pada: ${new Date().toLocaleDateString('id-ID')}`, 14, 27);
+
+      const tableData = transactions.map(t => [
+        t.date,
+        t.type === 'in' ? 'Masuk' : 'Keluar',
+        t.category || '-',
+        t.title,
+        formatRupiah(t.amount),
+        t.note || '-'
+      ]);
+
+      doc.autoTable({
+        startY: 32,
+        head: [['Tanggal', 'Jenis', 'Kategori', 'Judul Transaksi', 'Jumlah', 'Keterangan']],
+        body: tableData,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [5, 150, 105] }
+      });
+
+      doc.save(`Laporan_BAZIS_AlFajar_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+
+    // --- MODAL HELPERS ---
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function showAlert(title, msg) {
+      document.getElementById('alertTitle').innerText = title;
+      document.getElementById('alertMsg').innerText = msg;
+      openModal('alertModal');
+    }
+  </script>
 </body>
 </html>
+```
